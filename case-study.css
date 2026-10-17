@@ -1,5 +1,5 @@
-.case-page { --case-accent: var(--blue); --case-accent-soft: #75baff1a; }
-.case-hero { position: relative; overflow: hidden; padding-block: clamp(78px, 9vw, 120px) 74px; border-bottom: 1px solid var(--border); background: radial-gradient(ellipse at 84% 20%, #29405973, transparent 42%), linear-gradient(120deg, #162432, #101923 68%); }
+.case-page { --case-accent: var(--blue); --case-accent-soft: #75baff1a; --case-hero-start: #162432; --case-hero-glow: #29405973; }
+.case-hero { position: relative; overflow: hidden; padding-block: clamp(78px, 9vw, 120px) 74px; border-bottom: 1px solid var(--border); background: radial-gradient(ellipse at 84% 20%, var(--case-hero-glow), transparent 42%), linear-gradient(120deg, var(--case-hero-start), var(--bg) 68%); }
 .case-hero::after { content: ""; position: absolute; top: -160px; right: -90px; width: 490px; aspect-ratio: 1; border: 1px solid #7891a525; border-radius: 50%; box-shadow: 0 0 0 40px #7891a50c, 0 0 0 80px #7891a508; pointer-events: none; }
 .case-hero-inner { position: relative; z-index: 1; }
 .case-eyebrow, .case-meta, .case-number, .case-visual-label, .case-visual-caption, .case-footer-note { font-family: var(--mono); }
@@ -32,15 +32,25 @@
 .case-visual { min-height: 230px; position: relative; overflow: hidden; margin-top: 20px; border: 1px solid var(--border); background: #151f2a; }
 .case-visual-label, .case-visual-caption { position: absolute; z-index: 2; color: var(--subtle); font-size: 10px; letter-spacing: .1em; }
 .case-visual-label { top: 16px; left: 18px; }.case-visual-caption { right: 18px; bottom: 16px; }
-.evaluation-visual { display: grid; place-items: center; background: radial-gradient(ellipse at 50% 60%, #463e28, #1b2529 70%); }
-.evaluation-visual::before { content: ""; position: absolute; inset: 30px; border: 1px solid #c1a35c26; background-image: linear-gradient(#c1a35c13 1px, transparent 1px), linear-gradient(90deg, #c1a35c13 1px, transparent 1px); background-size: 32px 32px; }
+.evaluation-visual { display: grid; place-items: center; background: radial-gradient(ellipse at 50% 60%, #373047, #201d29 70%); }
+.evaluation-visual::before { content: ""; position: absolute; inset: 30px; border: 1px solid #c6afff35; background-image: linear-gradient(#c6afff13 1px, transparent 1px), linear-gradient(90deg, #c6afff13 1px, transparent 1px); background-size: 32px 32px; }
 .evaluation-matrix { position: relative; z-index: 1; width: min(42%, 190px); display: grid; grid-template-columns: repeat(5, 1fr); gap: 7px; transform: translateY(10px); }
-.evaluation-matrix span { aspect-ratio: 1; display: grid; place-items: center; border: 1px solid #c3a76064; color: #f0d493; background: #9e82411f; font: 10px var(--mono); }
-.evaluation-matrix span:nth-child(3n) { background: #b4995c50; }.evaluation-matrix span:nth-child(5n + 2) { border-color: #8ba8ba77; color: #bbd9e8; background: #668ba633; }
-.debt-page { --case-accent: #d0e29a; --case-accent-soft: #d0e29a16; }
-.debt-page .case-hero { background: radial-gradient(ellipse at 84% 20%, #34493680, transparent 44%), linear-gradient(120deg, #1a2b2b, #101923 68%); }
-.arena-page { --case-accent: #ffc15b; --case-accent-soft: #ffc15b16; }
-.arena-page .case-hero { background: radial-gradient(ellipse at 84% 20%, #493e2875, transparent 44%), linear-gradient(120deg, #242b30, #101923 68%); }
+.evaluation-matrix span { aspect-ratio: 1; display: grid; place-items: center; border: 1px solid #c6afff70; color: #e3d9ff; background: #9e82c11f; font: 10px var(--mono); }
+.evaluation-matrix span:nth-child(3n) { background: #b499d250; }.evaluation-matrix span:nth-child(5n + 2) { border-color: #9eb1d477; color: #d3e3ff; background: #668ba633; }
+.debt-page { --bg: #101a18; --surface: #172622; --surface-2: #1d302a; --surface-3: #283b31; --border: #3b5548; --line: #30483c; --case-accent: #d0e29a; --case-accent-soft: #d0e29a16; --case-hero-start: #1a2b2b; --case-hero-glow: #34493680; }
+.arena-page { --bg: #141a1d; --surface: #1b2528; --surface-2: #222f33; --surface-3: #2a3b40; --border: #40545b; --line: #334950; --case-accent: #ffc15b; --case-accent-soft: #ffc15b16; --case-hero-start: #242b30; --case-hero-glow: #493e2875; }
+.evaluation-page { --bg: #17151c; --surface: #211e2a; --surface-2: #2a2635; --surface-3: #353044; --border: #4a425a; --line: #3b344a; --case-accent: #c6afff; --case-accent-soft: #c6afff16; --case-hero-start: #292635; --case-hero-glow: #493b6375; }
+.arena-live-section { padding-block: 44px 54px; border-bottom: 1px solid var(--border); background: linear-gradient(180deg, #1a2327, #141a1d 78%); }
+.arena-live-heading { display: flex; align-items: end; justify-content: space-between; gap: 28px; margin-bottom: 22px; }
+.arena-live-heading h2 { margin: 10px 0 8px; font-size: clamp(27px, 3.4vw, 38px); letter-spacing: -.03em; }
+.arena-live-heading p:not(.case-number) { max-width: 720px; margin: 0; color: var(--muted); font-size: 14px; line-height: 1.8; }
+.arena-live-shell { overflow: hidden; border: 1px solid #8090954d; border-radius: 7px; background: #f5f3ed; box-shadow: 0 20px 54px #0004; }
+.arena-dashboard-host { display: block; min-height: 360px; }
+.arena-live-section [hidden] { display: none !important; }
+.arena-live-local-note { min-height: 250px; display: grid; align-content: center; justify-items: center; gap: 5px; padding: 30px; text-align: center; }
+.arena-live-local-note .case-number { margin: 0; color: #9a762c; }
+.arena-live-local-note p:last-child { max-width: 600px; margin: 8px 0 0; color: #42525a; font-size: 14px; line-height: 1.8; }
+.arena-live-caption { margin: 12px 2px 0; color: var(--subtle); font-size: 11px; line-height: 1.7; }
 .debt-visual { display: flex; flex-direction: column; justify-content: center; padding: 42px; background: radial-gradient(ellipse at 52% 48%, #354b3b, #17251f 72%); }
 .debt-visual::before { content: ""; position: absolute; inset: 0; opacity: .25; background-image: linear-gradient(#c8d8a00d 1px, transparent 1px), linear-gradient(90deg, #c8d8a00d 1px, transparent 1px); background-size: 25px 25px; }
 .debt-route { position: relative; z-index: 1; display: flex; justify-content: space-between; gap: 20px; color: #c9d8b1; font: 11px var(--mono); letter-spacing: .09em; }
@@ -71,6 +81,7 @@
   .case-stats { margin-top: 38px; }
   .case-stat { padding-inline: 14px; }.case-stat strong { font-size: 20px; }
   .case-end { align-items: flex-start; flex-direction: column; }
+  .arena-live-heading { align-items: flex-start; flex-direction: column; gap: 17px; }
 }
 @media (max-width: 480px) {
   .case-meta { gap: 7px; }.case-meta span { padding: 8px; font-size: 9px; }

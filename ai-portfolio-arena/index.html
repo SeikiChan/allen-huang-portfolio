@@ -7,7 +7,7 @@
   <meta name="description" content="AI Portfolio Arena：以共同冻结的市场证据和隔离的 Alpaca Paper 账户，搭建可审计的 Claude 与 Codex AI 投资决策实验。">
   <title>AI Portfolio Arena — Allen Huang</title>
   <link rel="stylesheet" href="../shared.css">
-  <link rel="stylesheet" href="../case-study.css">
+  <link rel="stylesheet" href="../case-study.css?v=arena-live-native">
 </head>
 <body class="case-page arena-page">
   <header class="site-header">
@@ -27,6 +27,26 @@
           <div class="case-stat"><strong>01</strong><span>共同冻结的证据包</span></div>
           <div class="case-stat"><strong>PAPER</strong><span>模拟账户执行环境</span></div>
         </div>
+      </div>
+    </section>
+    <section class="arena-live-section" aria-labelledby="arena-live-title">
+      <div class="section-shell">
+        <div class="arena-live-heading">
+          <div>
+            <p class="case-number">LIVE VIEW / PAPER ONLY</p>
+            <h2 id="arena-live-title">角斗场运行看板</h2>
+            <p>完整呈现 Claude 与 Codex 的 Paper 净值、决策动态、互评和研究档案；所有内容都在本页展开。</p>
+          </div>
+        </div>
+        <div class="arena-live-shell">
+          <div id="arena-dashboard-host" class="arena-dashboard-host">
+          <div class="arena-live-local-note" id="arena-live-local-note">
+            <p class="case-number">LOCAL / READ-ONLY</p>
+            <p>本机预览会在这里直接加载完整的只读看板。公开页面不会连接或公开本机 Paper 账户数据。</p>
+          </div>
+          </div>
+        </div>
+        <p class="arena-live-caption">看板内容直接并入本页，整页连续滚动；只读 Paper 数据，不触发模型调用或订单。模拟账户表现不代表真实资金表现。</p>
       </div>
     </section>
     <div class="case-body section-shell">
@@ -67,11 +87,12 @@
         </div>
       </section>
       <div class="case-end">
-        <p>这项工作的重点，是把 AI 决策实验设计成输入一致、边界清楚、过程可复核的系统；页面不展示账户、仓位或实时交易记录。</p>
+        <p>这项工作的重点，是把 AI 决策实验设计成输入一致、边界清楚、过程可复核的系统。上方运行看板仅在本机预览时加载。</p>
         <a class="button" href="../#contact">联系我讨论实验设计 <span aria-hidden="true">↗</span></a>
       </div>
     </div>
   </main>
   <footer class="site-footer"><a class="signature" href="../" aria-label="回到首页">AH<span class="signature-dot">.</span></a><span>独立制作 · 研究先看证据</span><a href="https://github.com/SeikiChan" target="_blank" rel="noreferrer">GITHUB ↗</a></footer>
+  <script src="./dashboard-integrate.js" defer></script>
 </body>
 </html>
