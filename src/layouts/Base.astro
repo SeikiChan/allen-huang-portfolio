@@ -45,7 +45,7 @@ const fonts = `https://fonts.googleapis.com/css2?${families.map((f) => `family=$
       <div class="wrap">
         <a class="brand" href={href(lang)} aria-label={UI.home[lang]}><b>Allen Huang</b><span class="mono">{lang === 'en' ? 'AI × Games' : 'AI × 游戏'}</span></a>
         <nav class="topnav" aria-label={lang === 'en' ? 'Main' : '主导航'}>
-          <a href={`${href(lang)}#matches`}>{UI.navMatches[lang]}</a>
+          <a href={`${href(lang)}#work`}>{UI.navWork[lang]}</a>
           <a class="opt" href={`${href(lang)}#player`}>{UI.navPlayer[lang]}</a>
           <a href={`${href(lang)}#contact`}>{UI.navContact[lang]}</a>
           <a class="lang" href={href(other, path)} hreflang={UI.htmlLang[other]} lang={UI.htmlLang[other]} aria-label={UI.switchLabel[lang]}>{UI.switchTo[lang]}</a>

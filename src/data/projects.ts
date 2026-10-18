@@ -28,6 +28,10 @@ export type Status = 'live' | 'final' | 'shipped';
 
 export interface Match {
   slug: string;
+  /** Plain one-line category shown under the project name. */
+  category: T;
+  /** Show the two-sided head-to-head strip. Only for projects that are literally a contest. */
+  versus: boolean;
   track: 'ai' | 'game';
   status: Status;
   statusLabel: T;
@@ -50,6 +54,8 @@ const S = (en: string, zh: string): T => ({ en, zh });
 export const MATCHES: Match[] = [
   {
     slug: 'ai-portfolio-arena',
+    category: S('AI experiment · Claude vs GPT trading', 'AI 实验 · Claude 对 GPT 炒股'),
+    versus: true,
     track: 'ai',
     status: 'live',
     statusLabel: S('Live · season 1', '进行中 · 第一季'),
@@ -86,8 +92,8 @@ export const MATCHES: Match[] = [
       },
       {
         kind: 'rules',
-        tag: S('Rulebook', '比赛规则'),
-        heading: S('Six rules that make it a fair fight', '六条规则，保证比得公平'),
+        tag: S('Rules', '规则'),
+        heading: S('Six rules to keep it fair', '六条规则，保证公平'),
         rules: [
           { title: S('Same exam paper', '同一张考卷'), body: S('At 10:00 ET every market day, one data packet is frozen: prices, quotes, news, financials. Both models get the same bytes, checked by SHA-256.', '每个交易日美东 10:00 冻结一份数据包：价格、报价、新闻、财报。两边拿到的字节完全一样，用 SHA-256 核对。') },
           { title: S('Same field', '同一块场地'), body: S('20 large US stocks. Long only, at most 10 positions, no more than 20% in one name, 50–95% invested.', '20 只美国大盘股。只做多，最多持有 10 只，单只不超过 20%，总仓位 50%–95%。') },
@@ -99,13 +105,13 @@ export const MATCHES: Match[] = [
       },
       {
         kind: 'figure',
-        tag: S('Matchday', '比赛日流程'),
+        tag: S('A trading day', '一个交易日'),
         heading: S('One trading day, start to finish', '一个交易日，从头到尾'),
         figure: 'arena-flow',
       },
       {
         kind: 'log',
-        tag: S('Play-by-play', '比赛记录'),
+        tag: S('Timeline', '时间线'),
         heading: S('Season one so far', '第一季到目前为止'),
         entries: [
           { date: '2026-10-09', title: S('Split out as its own project', '独立成项目'), body: S('It started inside my quant repo. I moved it out so the experiment rules could not leak into live trading code.', '最早放在量化仓库里。我把它拆出来，免得实验规则和实盘代码互相影响。') },
@@ -119,7 +125,7 @@ export const MATCHES: Match[] = [
       },
       {
         kind: 'text',
-        tag: S('Coaching rule', '教练守则'),
+        tag: S('Evaluating prompts', '怎么评价提示词'),
         heading: S('Never tune a prompt on profit', '不拿盈亏调提示词'),
         body: [
           S(
@@ -132,9 +138,11 @@ export const MATCHES: Match[] = [
   },
   {
     slug: 'ai-evaluation',
+    category: S('AI evaluation · 25 cases, human-scored', 'AI 评估 · 25 道题，人工评分'),
+    versus: true,
     track: 'ai',
     status: 'final',
-    statusLabel: S('Full time', '已完赛'),
+    statusLabel: S('Completed', '已完成'),
     home: { name: S('GPT', 'GPT'), note: S('GPT 5.6 ins', 'GPT 5.6 ins') },
     away: { name: S('Claude', 'Claude'), note: S('Sonnet 5.5 low', 'Sonnet 5.5 low') },
     score: { value: S('13 : 4', '13 : 4'), label: S('8 draws · 25 cases', '8 平 · 25 题') },
@@ -153,7 +161,7 @@ export const MATCHES: Match[] = [
     blocks: [
       {
         kind: 'rules',
-        tag: S('Rulebook', '比赛规则'),
+        tag: S('Rules', '规则'),
         heading: S('How a case is judged', '一道题怎么判'),
         rules: [
           { title: S('Answer key first', '先写标准答案'), body: S('Each case states the expected behavior before either model sees the prompt, so the bar cannot move after reading the answers.', '每道题在模型看到题目之前就写好预期表现。读完答案之后，标准不能再改。') },
@@ -164,7 +172,7 @@ export const MATCHES: Match[] = [
       },
       {
         kind: 'figure',
-        tag: S('Box score', '技术统计'),
+        tag: S('Results', '结果'),
         heading: S('Result by category', '分类比分'),
         body: [S('GPT was steadier on strict formats: every field present, exact headers. Claude won where restraint mattered: not going past the evidence, rewriting Cantonese without adding meaning, and working out what an ambiguous “this” referred to.', 'GPT 在严格格式上更稳：字段齐全、表头精确。Claude 赢在需要克制的地方：不越出证据作答、改写粤语不添意思、判断含糊的“这个”指的是什么。')],
         figure: 'eval-box',
@@ -177,7 +185,7 @@ export const MATCHES: Match[] = [
       },
       {
         kind: 'figure',
-        tag: S('Key play', '关键回合'),
+        tag: S('Example', '案例'),
         heading: S('Case IF-04: the missing field', 'IF-04：少了一个字段'),
         body: [S('Rewrite a one-line complaint as a bug report with four required fields, without inventing a device or version. One answer dropped the “Actual” field and the refresh step. That is where the points went.', '把一句抱怨改写成缺陷报告，必须有四个字段，而且不能编造设备或版本。其中一份答案漏了“Actual”字段和“刷新”这一步，分差就出在这里。')],
         figure: 'eval-case',
@@ -186,6 +194,8 @@ export const MATCHES: Match[] = [
   },
   {
     slug: 'am-7030',
+    category: S('Quant research · live weekly stock model', '量化研究 · 实盘周度选股模型'),
+    versus: true,
     track: 'ai',
     status: 'live',
     statusLabel: S('Live · weekly', '实盘 · 每周调仓'),
@@ -204,7 +214,7 @@ export const MATCHES: Match[] = [
     blocks: [
       {
         kind: 'figure',
-        tag: S('Formation', '阵型'),
+        tag: S('How it works', '模型结构'),
         heading: S('How AM 70/30 picks stocks', 'AM 70/30 怎么选股'),
         body: [
           S('Momentum is the core idea: stocks that rose over the last year tend to keep rising for a while. The model splits the money 70/30 between two sleeves that read momentum in slightly different ways, rebalances once a week, and puts two gates on top.', '核心思路是动量：过去一年涨得好的股票，接下来一段时间往往还会涨。模型把资金按 70/30 分成两组，两组用稍有不同的方式读动量，每周调仓一次，最上面再加两道闸。'),
@@ -213,7 +223,7 @@ export const MATCHES: Match[] = [
       },
       {
         kind: 'log',
-        tag: S('Play-by-play', '比赛记录'),
+        tag: S('Timeline', '时间线'),
         heading: S('From first paper trade to the current version', '从第一笔模拟交易到现在'),
         entries: [
           { date: '2025-12', title: S('Paper trading starts', '模拟盘开跑'), body: S('Runs every weekday on a schedule; a dashboard shows targets, gates and fills.', '每个交易日定时运行；看板显示目标仓位、闸门状态和成交。') },
@@ -228,10 +238,10 @@ export const MATCHES: Match[] = [
       },
       {
         kind: 'figure',
-        tag: S('Replay', '回放'),
+        tag: S('The gate bug', '闸门问题'),
         heading: S('Why the gate got stuck', '闸门为什么卡住了'),
         body: [
-          S('Red at −18% drawdown cut exposure to 25%; it released only above −8%. But the gate read the account curve after the cut, which moves at a quarter speed. Climbing from −18% to −8% on that curve needs the strategy itself to gain about 49%. The protection was blocking its own recovery. The fix: read the strategy’s own curve, apply exposure to the returns actually earned.', '回撤到 −18% 时闸门变红，仓位降到 25%；回到 −8% 以内才解除。但闸门读的是降仓后的账户曲线，这条曲线只以四分之一的速度移动。要在这条曲线上从 −18% 爬回 −8%，策略本身得涨约 49%。保护机制挡住了自己的恢复。修法：闸门改读策略自己的曲线，仓位比例仍然作用在实际获得的收益上。'),
+          S('Red at −18% drawdown cut exposure to 25%; it released only above −8%. But the gate read the account curve after the cut, which moves at a quarter speed. Climbing from −18% to −8% on that curve needs the strategy itself to gain about 49%. The protection was blocking its own recovery. The fix: the gate now reads the strategy’s own curve. Production then switched the account gate off and kept the SPY trend gate.', '回撤到 −18% 时闸门变红，仓位降到 25%；回到 −8% 以内才解除。但闸门读的是降仓后的账户曲线，这条曲线只以四分之一的速度移动。要在这条曲线上从 −18% 爬回 −8%，策略本身得涨约 49%。保护机制挡住了自己的恢复。修法：闸门改读策略自己的曲线。之后生产环境关掉了账户闸门，保留 SPY 趋势闸。'),
         ],
         figure: 'gate-lock',
       },
@@ -239,6 +249,8 @@ export const MATCHES: Match[] = [
   },
   {
     slug: 'ai-news-radar',
+    category: S('Research tool · released v1.0', '研究工具 · 已发布 v1.0'),
+    versus: false,
     track: 'ai',
     status: 'shipped',
     statusLabel: S('Released v1.0', '已发布 v1.0'),
@@ -261,7 +273,7 @@ export const MATCHES: Match[] = [
     blocks: [
       {
         kind: 'figure',
-        tag: S('On screen', '实机画面'),
+        tag: S('Interface', '界面'),
         heading: S('The morning brief', '每天早上的简报'),
         body: [S('Top call, ranked opportunities, and for each one: market reaction, filings, options, expectations, and the link to the original source. Gray means no data, and the screen says so.', '今日头号线索、按优先级排好的机会列表，每一条都列出市场反应、监管文件、期权、预期，以及原始来源链接。灰色表示没有数据，界面上直接标出来。')],
         figure: 'radar-shot',
@@ -275,7 +287,7 @@ export const MATCHES: Match[] = [
       },
       {
         kind: 'rules',
-        tag: S('Design rules', '设计规则'),
+        tag: S('Scope', '边界'),
         heading: S('What it refuses to do', '它不做什么'),
         rules: [
           { title: S('No buy or sell calls', '不给买卖建议'), body: S('It ranks leads for a person to check. It never generates orders.', '只给线索排序，交给人去核实。从不生成交易指令。') },
@@ -286,7 +298,7 @@ export const MATCHES: Match[] = [
       },
       {
         kind: 'log',
-        tag: S('Build log', '开发记录'),
+        tag: S('Timeline', '时间线'),
         heading: S('Prototype to release', '从原型到发布'),
         entries: [
           { date: '2026-05-30', title: S('First version', '第一版'), body: S('Feeds, rule-based scoring, a local web view.', '新闻源采集、规则评分、本地网页界面。') },
@@ -298,6 +310,8 @@ export const MATCHES: Match[] = [
   },
   {
     slug: 'debt-runner',
+    category: S('Game · Unity roguelite, team of four', '游戏 · Unity roguelite，四人团队'),
+    versus: false,
     track: 'game',
     status: 'shipped',
     statusLabel: S('Spring Show 2026', '2026 春季作品展'),
@@ -326,7 +340,7 @@ export const MATCHES: Match[] = [
       },
       {
         kind: 'log',
-        tag: S('Production log', '制作记录'),
+        tag: S('Timeline', '时间线'),
         heading: S('33 commits from kick-off to show build', '从开工到展出版本，33 次提交'),
         entries: [
           { date: '2026-02-10', title: S('Kick-off', '开工'), body: S('Scope, milestones and owners set; I wrote the design document and kept it current.', '定范围、里程碑和分工；设计文档由我编写并持续更新。') },
@@ -345,7 +359,7 @@ export const MATCHES: Match[] = [
       },
       {
         kind: 'figure',
-        tag: S('Footage', '实机视频'),
+        tag: S('Video', '视频'),
         heading: S('Watch a round', '看一个回合'),
         figure: 'debt-video',
       },

@@ -17,22 +17,23 @@ const c = {
   en: {
     title: 'Allen Huang — AI tools and games',
     desc: 'Allen Huang builds AI tools and games: Claude vs GPT trading, a model evaluation, a live stock model, a research terminal, and a Unity roguelite.',
-    kicker: ['Portfolio', 'Season 2026'],
-    intro: 'I make <strong>AI tools</strong> and <strong>games</strong>. Most of my projects end up as a contest: I set the rules, build the field, and keep the score.',
+    kicker: ['Portfolio', '2026'],
+    role: 'AI evaluation & tools · Game production & QA',
+    intro: 'I design experiments that test AI models, build research tools around them, and run my own trading model live. On the game side I lead small teams: DebtRunner went from first commit to a playable build in four weeks and was selected for the AAU Spring Show.',
     ribbon: [
-      ['live', 'Live', 'Claude <i>vs</i> GPT', 'paper trading'],
-      ['', 'FT', 'GPT <i>13–4</i> Claude', '8 draws'],
-      ['live', 'Live', 'AM 70/30 <i>vs</i> SPY', 'weekly'],
+      ['live', 'Running', 'AI Portfolio Arena', 'Claude vs GPT'],
+      ['', 'Done', 'Model evaluation', 'GPT 13–4 Claude'],
+      ['live', 'Live', 'AM 70/30', 'weekly stock model'],
       ['', 'v1.0', 'AI News Radar', 'released'],
       ['', 'Spring Show', 'DebtRunner', '4 people · 4 weeks'],
     ],
-    mHead: 'Matches',
-    mP: 'Two AI models trading against each other, an evaluation I refereed, my own stock model, a research tool, and a game.',
-    open: 'Match report',
+    mHead: 'Selected work',
+    mP: 'Four AI projects and one game. Each page shows the rules, the timeline and what I changed along the way.',
+    open: 'Read more',
     hHead: 'Highlights',
     hP: 'Real screens from DebtRunner and AI News Radar.',
     caps: ['DebtRunner · title screen', 'Round 1', 'Level up', 'Shop and wheel', 'AI News Radar · daily brief'],
-    pHead: 'Player card',
+    pHead: 'About',
     pLead: 'I work in two areas: AI tools and games. Claude Code and Codex write most of the code in these projects. My part is deciding what to build, writing the rules, checking what comes back, and choosing what ships.',
     card: [
       ['Positions', 'AI evaluation & tooling · Game production & QA'],
@@ -47,22 +48,23 @@ const c = {
   zh: {
     title: 'Allen Huang — AI 工具与游戏',
     desc: 'Allen Huang 做 AI 工具和游戏：Claude 对 GPT 炒股、模型评估、实盘选股模型、研究终端，以及一款 Unity roguelite。',
-    kicker: ['作品集', '2026 赛季'],
-    intro: '我做 <strong>AI 工具</strong>，也做<strong>游戏</strong>。我的项目最后大多会变成一场比赛：我定规则、搭场地，然后记比分。',
+    kicker: ['作品集', '2026'],
+    role: 'AI 评估与工具 · 游戏制作与 QA',
+    intro: '我设计检验 AI 模型的实验，围绕它们做研究工具，也在实盘运行自己的量化模型。游戏方面，我带小团队做项目：DebtRunner 从第一次提交到可玩版本只用了四周，并入选 AAU 春季作品展。',
     ribbon: [
-      ['live', '进行中', 'Claude <i>对</i> GPT', '模拟盘交易'],
-      ['', '完赛', 'GPT <i>13–4</i> Claude', '8 平'],
-      ['live', '实盘', 'AM 70/30 <i>对</i> SPY', '每周调仓'],
+      ['live', '运行中', 'AI 角斗场', 'Claude 对 GPT'],
+      ['', '已完成', '模型评估', 'GPT 13–4 Claude'],
+      ['live', '实盘', 'AM 70/30', '周度选股模型'],
       ['', 'v1.0', 'AI News Radar', '已发布'],
       ['', '春季展', 'DebtRunner', '4 人 · 4 周'],
     ],
-    mHead: '赛程',
-    mP: '两个 AI 模型对着炒股、一场我当裁判的模型评估、我自己的选股模型、一个研究工具，还有一款游戏。',
-    open: '比赛报告',
+    mHead: '项目',
+    mP: '四个 AI 项目和一款游戏。每个项目页都写了规则、时间线，以及过程中我改了什么。',
+    open: '查看详情',
     hHead: '精彩镜头',
     hP: 'DebtRunner 和 AI News Radar 的真实画面。',
     caps: ['DebtRunner · 标题画面', '第一回合', '升级选卡', '商店与转盘', 'AI News Radar · 每日简报'],
-    pHead: '球员卡',
+    pHead: '关于我',
     pLead: '我做两个方向：AI 工具和游戏。这些项目里的大部分代码由 Claude Code 和 Codex 编写。我负责的是：决定做什么、定规则、检查交回来的结果、决定什么能上线。',
     card: [
       ['位置', 'AI 评估与工具 · 游戏制作与 QA'],
@@ -84,10 +86,11 @@ const shots = [title, gameplay, levelUp, shop, radar];
     <div class="wrap">
       <div class="mast-top mono"><span>{c.kicker[0]}</span><span>{c.kicker[1]}</span></div>
       <h1 class="name">Allen <span class="v">Huang</span></h1>
+      <p class="role-line display display-zh">{c.role}</p>
       <div class="mast-grid">
-        <p class="intro" set:html={c.intro} />
+        <p class="intro">{c.intro}</p>
         <div class="mast-links">
-          <a class="btn" href="#matches">{c.mHead} ↓</a>
+          <a class="btn" href="#work">{c.mHead} ↓</a>
           <a class="btn ghost" href={`mailto:${CONTACT.email}`}>{UI.email[lang]}</a>
           <a class="btn ghost" href={CONTACT.linkedin} target="_blank" rel="noreferrer">LinkedIn ↗</a>
         </div>
@@ -107,7 +110,7 @@ const shots = [title, gameplay, levelUp, shop, radar];
     </div>
   </div>
 
-  <section class="section" id="matches">
+  <section class="section" id="work">
     <div class="wrap">
       <div class="sec-head">
         <h2 class="display display-zh">{c.mHead}</h2>
@@ -120,13 +123,15 @@ const shots = [title, gameplay, levelUp, shop, radar];
               <span class={`status ${m.status}`}>{m.statusLabel[lang]}</span>
               <span class="mono">{m.dates[lang]}</span>
             </div>
-            <div class="fx-line">
-              <span class:list={['side', 'home', { zh: m.home.zh }]}>{m.home.name[lang]}</span>
+            <div class="fx-main">
+              <div>
+                <h3 class="fx-title display display-zh">{m.title[lang]}</h3>
+                <p class="fx-cat">{m.category[lang]}</p>
+              </div>
               <span class:list={['tile', { live: m.status === 'live' }]}><strong>{m.score.value[lang]}</strong><span>{m.score.label[lang]}</span></span>
-              <span class:list={['side', 'away', { zh: m.away.zh }]}>{m.away.name[lang]}</span>
             </div>
             <div class="fx-bottom">
-              <p><b>{m.title[lang]}.</b> {m.line[lang]}</p>
+              <p>{m.line[lang]}</p>
               <span class="fx-go">{c.open} →</span>
             </div>
           </a>

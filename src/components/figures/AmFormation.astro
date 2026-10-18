@@ -16,7 +16,7 @@ const t = {
     week: ['Every week', 'Rebalance once. A held stock keeps its place until it drops 7 ranks past the cut. Minimum holding period. A stock down 20% from entry is cut in half.'],
     day: ['Other days', 'Risk check only: sells allowed, no buys.'],
     gates: ['Two gates', 'SPY below its 250-day average → move to cash. Account drawdown past −18% → exposure cut to 25%.'],
-    now: ['Since 2026-09-29', 'PM20: pure 12-1 momentum, top 20. No pullback leg, no forced hold, no stop. It replaced the full formation after the rule-by-rule test.'],
+    now: ['Since 2026-09-29', 'Live runs PM20: one sleeve, pure 12-1 momentum, top 20. No pullback leg, no 70/30 split, no forced hold, no stop. It replaced the structure above after the rule-by-rule test.'],
   },
   zh: {
     pool: ['股票池', '通过流动性筛选的美股。筛选用横截面排名，排名没有单位，也就不会用错单位。'],
@@ -28,7 +28,7 @@ const t = {
     week: ['每周', '调仓一次。持仓要掉出前 20 之后再多掉 7 名才卖。有最短持有期。比买入价跌 20% 的股票砍一半。'],
     day: ['其他日子', '只做风险检查：只许卖，不许买。'],
     gates: ['两道闸', 'SPY 跌破 250 日均线 → 转现金。账户回撤超过 −18% → 仓位降到 25%。'],
-    now: ['2026-09-29 起', 'PM20：纯 12-1 动量，取前 20。去掉回调腿、强制持有和止损。一条一条拆规则之后，它替换了原来的整套阵型。'],
+    now: ['2026-09-29 起', '实盘改跑 PM20：只有一组，纯 12-1 动量，取前 20。去掉回调腿、70/30 分组、强制持有和止损。一条一条拆规则之后，它替换了上面这套结构。'],
   },
 }[lang];
 ---

@@ -15,26 +15,30 @@ const vs = lang === 'en' ? 'vs' : '对';
   <section class="scoreboard">
     <div class="wrap">
       <div class="sb-top mono">
-        <a href={`${href(lang)}#matches`}>← {UI.back[lang]}</a>
+        <a href={`${href(lang)}#work`}>← {UI.back[lang]}</a>
         <span class={`status ${m.status}`}>{m.statusLabel[lang]}</span>
       </div>
-      <div class="sb-line" aria-label={`${m.home.name[lang]} ${vs} ${m.away.name[lang]}`}>
-        <div class="sb-side home"><strong class:list={{ zh: m.home.zh, long: m.home.name[lang].length > 6 }}>{m.home.name[lang]}</strong><span>{m.home.note[lang]}</span></div>
-        <div class:list={['sb-score', { live: m.status === 'live' }]}><strong>{m.score.value[lang]}</strong><span>{m.score.label[lang]}</span></div>
-        <div class="sb-side away"><strong class:list={{ zh: m.away.zh, long: m.away.name[lang].length > 6 }}>{m.away.name[lang]}</strong><span>{m.away.note[lang]}</span></div>
-      </div>
-      <div class="sb-title">
+      <div class="sb-head">
         <div>
-          <p class="mono" style="margin: 0 0 6px; color: var(--board-muted)">{UI.report[lang]} · {m.dates[lang]}</p>
-          <h1>{m.title[lang]}</h1>
-          <p>{m.line[lang]}</p>
+          <p class="sb-cat">{m.category[lang]} · {m.dates[lang]}</p>
+          <h1 class="display display-zh">{m.title[lang]}</h1>
+          <p class="sb-lead">{m.line[lang]}</p>
         </div>
-        <dl class="sb-meta">
-          <div><dt>{UI.role[lang]}</dt><dd>{m.role[lang]}</dd></div>
-          <div><dt>{UI.built[lang]}</dt><dd>{m.stack}</dd></div>
-          <div><dt>{UI.links[lang]}</dt><dd>{m.links.length ? m.links.map((l) => <a href={l.url} target="_blank" rel="noreferrer">{l.label[lang]} ↗</a>) : UI.privateRepo[lang]}</dd></div>
-        </dl>
+        {m.versus ? (
+          <div class="vs" aria-label={`${m.home.name[lang]} ${vs} ${m.away.name[lang]}`}>
+            <div class="vs-side home"><strong>{m.home.name[lang]}</strong><span>{m.home.note[lang]}</span></div>
+            <div class:list={['sb-score', { live: m.status === 'live' }]}><strong>{m.score.value[lang]}</strong><span>{m.score.label[lang]}</span></div>
+            <div class="vs-side away"><strong>{m.away.name[lang]}</strong><span>{m.away.note[lang]}</span></div>
+          </div>
+        ) : (
+          <div class="vs solo"><div class="sb-score"><strong>{m.score.value[lang]}</strong><span>{m.score.label[lang]}</span></div></div>
+        )}
       </div>
+      <dl class="sb-meta">
+        <div><dt>{UI.role[lang]}</dt><dd>{m.role[lang]}</dd></div>
+        <div><dt>{UI.built[lang]}</dt><dd>{m.stack}</dd></div>
+        <div><dt>{UI.links[lang]}</dt><dd>{m.links.length ? m.links.map((l) => <a href={l.url} target="_blank" rel="noreferrer">{l.label[lang]} ↗</a>) : UI.privateRepo[lang]}</dd></div>
+      </dl>
     </div>
   </section>
 
@@ -68,7 +72,7 @@ const vs = lang === 'en' ? 'vs' : '对';
               <li class:list={{ key: e.key }}>
                 <time>{e.date === 'Now' ? (lang === 'en' ? 'Now' : '现在') : e.date}</time>
                 <div>
-                  <h3>{e.key && <span class="kp">{lang === 'en' ? 'Key play' : '关键回合'}</span>}{e.title[lang]}</h3>
+                  <h3>{e.key && <span class="kp">{lang === 'en' ? 'Key moment' : '关键节点'}</span>}{e.title[lang]}</h3>
                   {e.body && <p set:html={e.body[lang]} />}
                 </div>
               </li>
@@ -84,7 +88,7 @@ const vs = lang === 'en' ? 'vs' : '对';
 
   <div class="wrap" style="border-top: 3px solid var(--ink)">
     <a class="next" href={href(lang, `${next.slug}/`)}>
-      <span><small class="mono">{UI.next[lang]}</small><strong>{next.home.name[lang]} {vs} {next.away.name[lang]}</strong></span>
+      <span><small class="mono">{UI.next[lang]}</small><strong>{next.title[lang]}</strong></span>
       <span class="arrow" aria-hidden="true">→</span>
     </a>
   </div>
