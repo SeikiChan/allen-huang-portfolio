@@ -1,138 +1,133 @@
 ---
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
-import Figure from './Figure.astro';
 import { CONTACT, UI, href, type Lang } from '../i18n';
-import { PROJECTS } from '../data/projects';
-import gameplay from '../assets/debt-runner/gameplay.webp';
+import { MATCHES } from '../data/projects';
 import title from '../assets/debt-runner/title.webp';
+import gameplay from '../assets/debt-runner/gameplay.webp';
 import levelUp from '../assets/debt-runner/level-up.webp';
+import shop from '../assets/debt-runner/shop.webp';
 import radarEn from '../assets/news-radar/dashboard-en.png';
 import radarZh from '../assets/news-radar/dashboard-zh.png';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 
-const ai = PROJECTS.filter((p) => p.track === 'ai');
-const game = PROJECTS.find((p) => p.slug === 'debt-runner')!;
-
 const c = {
   en: {
-    title: 'Allen Huang — AI evaluation & game production',
-    desc: 'Portfolio of Allen Huang: AI evaluation, guardrails and research tools, plus game production, gameplay engineering and QA.',
-    tracks: [['AI', 'evaluation & tooling'], ['Games', 'production & QA']],
-    h1: 'AI you can check.<br>Games worth <em>another round.</em>',
-    intro: 'I’m Allen Huang. I work in two directions. In AI, I design evaluations and guardrails so model output can be traced and tested. In games, I lead small teams from a concept to a playable build. Below are five projects: what I did, and the evidence.',
-    see: 'See the work',
-    facts: [
-      ['13 · 4 · 8', 'GPT · Claude · tie, across 25 hand-scored cases'],
-      ['SHA-256', 'on every evidence packet the Arena models read'],
-      ['218', 'automated tests behind AI News Radar v1.0'],
-      ['4 × 4', 'people × weeks to a Spring Show game'],
+    title: 'Allen Huang — AI tools and games',
+    desc: 'Allen Huang builds AI tools and games: Claude vs GPT trading, a model evaluation, a live stock model, a research terminal, and a Unity roguelite.',
+    kicker: ['Portfolio', 'Season 2026'],
+    intro: 'I make <strong>AI tools</strong> and <strong>games</strong>. Most of my projects end up as a contest: I set the rules, build the field, and keep the score.',
+    ribbon: [
+      ['live', 'Live', 'Claude <i>vs</i> GPT', 'paper trading'],
+      ['', 'FT', 'GPT <i>13–4</i> Claude', '8 draws'],
+      ['live', 'Live', 'AM 70/30 <i>vs</i> SPY', 'weekly'],
+      ['', 'v1.0', 'AI News Radar', 'released'],
+      ['', 'Spring Show', 'DebtRunner', '4 people · 4 weeks'],
     ],
-    collageGame: 'DebtRunner · gameplay',
-    collageRadar: 'AI News Radar · v1.0',
-    aiKicker: '01 / AI',
-    aiH: 'Systems where AI output can be checked',
-    aiP: 'Four projects, one habit: decide in advance what counts as evidence, then make the code enforce it.',
-    gameKicker: '02 / Games',
-    gameH: 'Shipping a game with a team',
-    gameP: 'Production, gameplay engineering and QA on a four-week team project.',
-    gameRows: [['Role', game.role.en], ['Team', '4 people · 4 weeks'], ['Engine', 'Unity 6 · URP · C#'], ['Result', 'Selected for the AAU Spring Show 2026']],
-    qa: 'QA & Chinese LQA sample',
-    appKicker: '03 / Approach',
-    appH: 'How I work',
-    appP: 'I build with AI coding agents such as Claude Code and Codex. I write the rules and the reviews, and the decisions are mine.',
-    principles: [
-      ['Put the rule in code, not in the prompt.', 'A prompt is a request. If something must be true, a validator checks it and rejects the output.', 'Arena: <code>validate()</code> rejects invented quotes and unsourced numbers.'],
-      ['Label what you know.', 'Observed, derived, assumption, unknown. A guess never stands in for missing data.', 'Quant research: checking each number’s basis found a gate that could not release.'],
-      ['Ship it, play it, cut it.', 'Get something playable each week, watch people play, and fix in the order the feedback sets.', 'DebtRunner: four weeks to a Spring Show build.'],
+    mHead: 'Matches',
+    mP: 'Two AI models trading against each other, an evaluation I refereed, my own stock model, a research tool, and a game.',
+    open: 'Match report',
+    hHead: 'Highlights',
+    hP: 'Real screens from DebtRunner and AI News Radar.',
+    caps: ['DebtRunner · title screen', 'Round 1', 'Level up', 'Shop and wheel', 'AI News Radar · daily brief'],
+    pHead: 'Player card',
+    pLead: 'I work in two areas: AI tools and games. Claude Code and Codex write most of the code in these projects. My part is deciding what to build, writing the rules, checking what comes back, and choosing what ships.',
+    card: [
+      ['Positions', 'AI evaluation & tooling · Game production & QA'],
+      ['Languages', 'Mandarin (native) · Cantonese (native) · English (professional)'],
+      ['School', 'Academy of Art University'],
+      ['Tools', 'Claude Code · Codex · Python · Unity 6 · C#'],
+      ['Looking for', 'AI evaluation, AI tooling, game production, game QA / Simplified Chinese LQA'],
     ],
-    conKicker: '04 / Contact',
-    conH: 'Let’s talk.',
-    conP: 'Open to roles in AI evaluation and quality, AI tooling, game production, and game QA / Simplified Chinese LQA. Native Mandarin and Cantonese; English for daily professional work.',
+    cHead: 'Get in touch',
+    cP: 'Email is the fastest way to reach me.',
   },
   zh: {
-    title: 'Allen Huang — AI 评估与游戏制作',
-    desc: 'Allen Huang 的作品集：AI 评估、约束机制与研究工具，以及游戏制作、玩法工程与 QA。',
-    tracks: [['AI', '评估与工具'], ['游戏', '制作与 QA']],
-    h1: '让 AI 经得起检查，<br>让游戏值得<br><em>再来一局。</em>',
-    intro: '我是 Allen Huang，主要做两个方向。AI 方向：我设计评估方法和约束机制，让模型输出可以追溯、可以检验。游戏方向：我带小团队把概念做成可以玩的版本。下面是五个项目：我做了什么，以及证据。',
-    see: '查看作品',
-    facts: [
-      ['13 · 4 · 8', 'GPT · Claude · 平局，共 25 个人工评分案例'],
-      ['SHA-256', 'Arena 模型读取的每份证据包都有哈希'],
-      ['218', 'AI News Radar v1.0 背后的自动化测试'],
-      ['4 × 4', '四个人、四周，做出入选春季展的游戏'],
+    title: 'Allen Huang — AI 工具与游戏',
+    desc: 'Allen Huang 做 AI 工具和游戏：Claude 对 GPT 炒股、模型评估、实盘选股模型、研究终端，以及一款 Unity roguelite。',
+    kicker: ['作品集', '2026 赛季'],
+    intro: '我做 <strong>AI 工具</strong>，也做<strong>游戏</strong>。我的项目最后大多会变成一场比赛：我定规则、搭场地，然后记比分。',
+    ribbon: [
+      ['live', '进行中', 'Claude <i>对</i> GPT', '模拟盘交易'],
+      ['', '完赛', 'GPT <i>13–4</i> Claude', '8 平'],
+      ['live', '实盘', 'AM 70/30 <i>对</i> SPY', '每周调仓'],
+      ['', 'v1.0', 'AI News Radar', '已发布'],
+      ['', '春季展', 'DebtRunner', '4 人 · 4 周'],
     ],
-    collageGame: 'DebtRunner · 游戏画面',
-    collageRadar: 'AI News Radar · v1.0',
-    aiKicker: '01 / AI',
-    aiH: '让 AI 输出可以被检查的系统',
-    aiP: '四个项目，同一个习惯：先定义什么算证据，再让代码去执行这个标准。',
-    gameKicker: '02 / 游戏',
-    gameH: '带团队把游戏做出来',
-    gameP: '一个四周团队项目里的制作、玩法工程与 QA。',
-    gameRows: [['角色', game.role.zh], ['团队', '4 人 · 4 周'], ['引擎', 'Unity 6 · URP · C#'], ['成果', '入选 AAU 2026 春季作品展']],
-    qa: '游戏 QA 与中文 LQA 样例',
-    appKicker: '03 / 做法',
-    appH: '我怎么工作',
-    appP: '我用 Claude Code、Codex 等 AI 编程代理来实现。规则和审查由我来写，决定由我来做。',
-    principles: [
-      ['规则写进代码，不写在提示词里。', '提示词只是请求。凡是必须成立的东西，都由校验器检查，不通过就拒绝。', 'Arena：<code>validate()</code> 拒绝编造的引文和无来源的数字。'],
-      ['给已知的东西贴标签。', '观测、推导、假设、未知。缺失的数据绝不用猜测顶替。', '量化研究：逐个核对数字的口径，找出了一个无法解除的闸门。'],
-      ['先做出来，再试玩，再取舍。', '每周都要有可玩的版本，看玩家怎么玩，再按反馈排修复顺序。', 'DebtRunner：四周做出春季展版本。'],
+    mHead: '赛程',
+    mP: '两个 AI 模型对着炒股、一场我当裁判的模型评估、我自己的选股模型、一个研究工具，还有一款游戏。',
+    open: '比赛报告',
+    hHead: '精彩镜头',
+    hP: 'DebtRunner 和 AI News Radar 的真实画面。',
+    caps: ['DebtRunner · 标题画面', '第一回合', '升级选卡', '商店与转盘', 'AI News Radar · 每日简报'],
+    pHead: '球员卡',
+    pLead: '我做两个方向：AI 工具和游戏。这些项目里的大部分代码由 Claude Code 和 Codex 编写。我负责的是：决定做什么、定规则、检查交回来的结果、决定什么能上线。',
+    card: [
+      ['位置', 'AI 评估与工具 · 游戏制作与 QA'],
+      ['语言', '普通话（母语）· 粤语（母语）· 英语（工作语言）'],
+      ['学校', 'Academy of Art University'],
+      ['工具', 'Claude Code · Codex · Python · Unity 6 · C#'],
+      ['在找', 'AI 评估、AI 工具、游戏制作、游戏 QA / 简体中文 LQA 方向的工作'],
     ],
-    conKicker: '04 / 联系',
-    conH: '聊聊吧。',
-    conP: '我在寻找 AI 评估与质量、AI 工具、游戏制作，以及游戏 QA / 简体中文 LQA 方向的机会。母语为普通话和粤语，英语可用于日常工作沟通。',
+    cHead: '联系我',
+    cP: '发邮件最快。',
   },
 }[lang];
+const radar = lang === 'en' ? radarEn : radarZh;
+const shots = [title, gameplay, levelUp, shop, radar];
 ---
 
 <Base lang={lang} title={c.title} description={c.desc} path="">
-  <section class="hero">
-    <div class="wrap hero-grid">
-      <div>
-        <div class="hero-tracks">
-          {c.tracks.map(([a, b]) => <span class="chip"><b>{a}</b>{b}</span>)}
-        </div>
-        <h1 set:html={c.h1} />
-        <p class="hero-intro">{c.intro}</p>
-        <div class="hero-actions">
-          <a class="btn" href="#work">{c.see} <span aria-hidden="true">↓</span></a>
-          <a class="btn btn-ghost" href={`mailto:${CONTACT.email}`}>{UI.email[lang]}</a>
-          <a class="btn btn-ghost" href={CONTACT.linkedin} target="_blank" rel="noreferrer">LinkedIn <span aria-hidden="true">↗</span></a>
-        </div>
-      </div>
-      <div class="collage" aria-hidden="true">
-        <figure class="c-game"><Image src={gameplay} alt="" widths={[640, 960]} sizes="(max-width: 900px) 80vw, 480px" loading="eager" /><figcaption>{c.collageGame}</figcaption></figure>
-        <figure class="c-radar"><Image src={lang === 'en' ? radarEn : radarZh} alt="" widths={[480, 800]} sizes="(max-width: 900px) 60vw, 380px" loading="eager" /><figcaption>{c.collageRadar}</figcaption></figure>
-      </div>
-    </div>
+  <section class="masthead">
     <div class="wrap">
-      <div class="facts" style="margin-top: clamp(40px, 6vw, 72px)">
-        {c.facts.map(([v, l]) => <div class="fact"><strong>{v}</strong><span>{l}</span></div>)}
+      <div class="mast-top mono"><span>{c.kicker[0]}</span><span>{c.kicker[1]}</span></div>
+      <h1 class="name">Allen <span class="v">Huang</span></h1>
+      <div class="mast-grid">
+        <p class="intro" set:html={c.intro} />
+        <div class="mast-links">
+          <a class="btn" href="#matches">{c.mHead} ↓</a>
+          <a class="btn ghost" href={`mailto:${CONTACT.email}`}>{UI.email[lang]}</a>
+          <a class="btn ghost" href={CONTACT.linkedin} target="_blank" rel="noreferrer">LinkedIn ↗</a>
+        </div>
       </div>
     </div>
   </section>
 
-  <section class="section" id="work" style="padding-top: clamp(32px, 5vw, 64px)">
+  <div class="ribbon" aria-label={lang === 'en' ? 'Scores' : '比分'}>
+    <div class="ribbon-track">
+      {[0, 1].map((n) => (
+        <div class="ribbon-set" aria-hidden={n === 1 ? 'true' : undefined}>
+          {c.ribbon.map(([cls, st, txt, note]) => (
+            <span><b class:list={{ 'r-live': cls === 'live' }}>{st}</b>&nbsp;&nbsp;<Fragment set:html={txt} />&nbsp;&nbsp;<i>{note}</i></span>
+          ))}
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <section class="section" id="matches">
     <div class="wrap">
-      <div class="section-head">
-        <div><p class="kicker mono">{c.aiKicker}</p><h2>{c.aiH}</h2></div>
-        <p>{c.aiP}</p>
+      <div class="sec-head">
+        <h2 class="display display-zh">{c.mHead}</h2>
+        <p>{c.mP}</p>
       </div>
-      <div class="cards">
-        {ai.map((p) => (
-          <a class="card" href={href(lang, `${p.slug}/`)}>
-            <div class="card-visual"><Figure id={p.card} lang={lang} compact /></div>
-            <div class="card-body">
-              <div class="card-meta mono"><span>{p.kicker[lang]}</span><span>{p.when[lang]}</span></div>
-              <h3 class="card-question">{p.question[lang]}</h3>
-              <p class="card-name">{p.name[lang]}</p>
-              <p class="card-summary">{p.summary[lang]}</p>
-              <span class="arrow-link">{UI.readCase[lang]} <span aria-hidden="true">→</span></span>
+      <div class="fixtures">
+        {MATCHES.map((m) => (
+          <a class="fixture" href={href(lang, `${m.slug}/`)}>
+            <div class="fx-top">
+              <span class={`status ${m.status}`}>{m.statusLabel[lang]}</span>
+              <span class="mono">{m.dates[lang]}</span>
+            </div>
+            <div class="fx-line">
+              <span class:list={['side', 'home', { zh: m.home.zh }]}>{m.home.name[lang]}</span>
+              <span class:list={['tile', { live: m.status === 'live' }]}><strong>{m.score.value[lang]}</strong><span>{m.score.label[lang]}</span></span>
+              <span class:list={['side', 'away', { zh: m.away.zh }]}>{m.away.name[lang]}</span>
+            </div>
+            <div class="fx-bottom">
+              <p><b>{m.title[lang]}.</b> {m.line[lang]}</p>
+              <span class="fx-go">{c.open} →</span>
             </div>
           </a>
         ))}
@@ -140,61 +135,45 @@ const c = {
     </div>
   </section>
 
-  <section class="section stage" id="games">
+  <section class="section" style="padding-top: 0">
     <div class="wrap">
-      <div class="section-head">
-        <div><p class="kicker mono">{c.gameKicker}</p><h2>{c.gameH}</h2></div>
-        <p>{c.gameP}</p>
+      <div class="sec-head">
+        <h2 class="display display-zh">{c.hHead}</h2>
+        <p>{c.hP}</p>
       </div>
-      <div class="feature">
-        <div class="feature-media">
-          <Image class="m-main" src={title} alt={lang === 'en' ? 'DebtRunner title screen' : 'DebtRunner 标题画面'} widths={[800, 1200]} sizes="(max-width: 900px) 94vw, 680px" />
-          <Image src={gameplay} alt={lang === 'en' ? 'DebtRunner gameplay' : 'DebtRunner 游戏画面'} widths={[400, 700]} sizes="(max-width: 900px) 46vw, 340px" />
-          <Image src={levelUp} alt={lang === 'en' ? 'DebtRunner level-up card choice' : 'DebtRunner 升级选卡'} widths={[400, 700]} sizes="(max-width: 900px) 46vw, 340px" />
-        </div>
-        <div class="feature-body">
-          <p class="mono muted">{game.kicker[lang]}</p>
-          <h3>{game.name[lang]}</h3>
-          <p>{game.summary[lang]}</p>
-          <ul class="feature-list">
-            {c.gameRows.map(([k, v]) => <li><span>{k}</span><span>{v}</span></li>)}
-          </ul>
-          <div class="hero-actions" style="margin-top: 0">
-            <a class="btn" href={href(lang, `${game.slug}/`)}>{UI.readCase[lang]} <span aria-hidden="true">→</span></a>
-            <a class="btn btn-ghost" href={game.links[1].url} target="_blank" rel="noreferrer">{c.qa} <span aria-hidden="true">↗</span></a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="section" id="approach">
-    <div class="wrap">
-      <div class="section-head">
-        <div><p class="kicker mono">{c.appKicker}</p><h2>{c.appH}</h2></div>
-        <p>{c.appP}</p>
-      </div>
-      <div class="principles">
-        {c.principles.map(([h, p, proof], i) => (
-          <article class="principle">
-            <span class="num mono">0{i + 1}</span>
-            <h3>{h}</h3>
-            <p>{p}</p>
-            <p class="proof" set:html={proof} />
-          </article>
+      <div class="highlights">
+        {shots.map((img, i) => (
+          <figure>
+            <Image src={img} alt={c.caps[i]} widths={i === 0 ? [800, 1200] : [400, 700]} sizes={i === 0 ? '(max-width: 760px) 94vw, 620px' : '(max-width: 760px) 46vw, 300px'} />
+            <figcaption>{c.caps[i]}</figcaption>
+          </figure>
         ))}
       </div>
     </div>
   </section>
 
-  <section class="section contact" id="contact">
-    <div class="wrap contact-grid">
+  <section class="section" id="player" style="padding-top: 0">
+    <div class="wrap player">
       <div>
-        <p class="kicker mono">{c.conKicker}</p>
-        <h2>{c.conH}</h2>
-        <p>{c.conP}</p>
+        <h2 class="display display-zh">{c.pHead}</h2>
+        <p class="player-lead">{c.pLead}</p>
       </div>
-      <div class="contact-links">
+      <div class="card-stats">
+        <div class="cs-head mono"><span>Allen Huang</span><span>#2026</span></div>
+        <dl>
+          {c.card.map(([k, v]) => <div class="row"><dt>{k}</dt><dd>{v}</dd></div>)}
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section class="section contact" id="contact">
+    <div class="wrap">
+      <div>
+        <h2 class="display display-zh">{c.cHead}</h2>
+        <p>{c.cP}</p>
+      </div>
+      <div class="contact-list">
         <a href={`mailto:${CONTACT.email}`}><span>{UI.email[lang]}</span><b>{CONTACT.email}</b></a>
         <a href={CONTACT.linkedin} target="_blank" rel="noreferrer"><span>LinkedIn</span><b>yilun-huang ↗</b></a>
         <a href={CONTACT.github} target="_blank" rel="noreferrer"><span>GitHub</span><b>SeikiChan ↗</b></a>

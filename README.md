@@ -4,20 +4,22 @@ Bilingual (English / 简体中文) portfolio site built with [Astro](https://ast
 
 ## Pages
 
-| Path | Content |
+The site is laid out as a fixture board: each project is a match between two sides, and each project page is a match report (scoreboard, rules, play-by-play, figures).
+
+| Path | Match |
 |---|---|
-| `/` and `/zh/` | Home: positioning, evidence strip, AI projects, games, approach, contact |
-| `/ai-evaluation/` | GPT vs Claude 25-case human evaluation |
-| `/ai-portfolio-arena/` | Auditable two-model paper experiment (structure only; no account data) |
-| `/ai-news-radar/` | Local-first research terminal, v1.0 |
-| `/quant-research/` | Measurement-basis bugs in a weekly equity system (no amounts or returns) |
-| `/debt-runner/` | Four-person Unity roguelite, Spring Show 2026 |
+| `/` and `/zh/` | Home: name, score ribbon, fixture board, highlights, player card, contact |
+| `/ai-portfolio-arena/` | Claude vs GPT: two models trading paper portfolios (no account data shown) |
+| `/ai-evaluation/` | GPT vs Claude: 25-case human evaluation, 13–4, 8 draws |
+| `/am-7030/` | AM 70/30 vs SPY: weekly stock model, research log, gate bug (no amounts or returns) |
+| `/ai-news-radar/` | Story vs evidence: research terminal v1.0 |
+| `/debt-runner/` | Player vs debt: four-person Unity roguelite, Spring Show 2026 |
 
 Every page exists in both languages; the Chinese version lives under `/zh/`.
 
 ## Where to edit
 
-- **Project text (both languages):** `src/data/projects.ts`. Each string is `{ en, zh }`, so the two versions sit side by side.
+- **Match text (both languages):** `src/data/projects.ts`. Each string is `{ en, zh }`, so the two versions sit side by side. A match report is a list of blocks (`text`, `rules`, `log`, `figure`), so each project can tell its story in its own order.
 - **Home page text:** `src/components/Home.astro`.
 - **Shared UI strings and contact details:** `src/i18n.ts`.
 - **Figures and diagrams:** `src/components/figures/`.
@@ -46,6 +48,6 @@ Only `dist/` is published. `design-concepts/` holds earlier design explorations 
 ## Content boundaries
 
 - AI Portfolio Arena: paper accounts only. The site shows no account data, positions, orders or returns, and does not embed the local dashboard.
-- Quant research: methodology and bug diagnosis only. No money amounts or returns. The repository is private.
+- AM 70/30: model design, research log and bug diagnosis. No money amounts or returns. The repository is private.
 - AI evaluation: results apply to the documented 25-case, single-rater set only.
 - DebtRunner: team project; the page lists only the author's role. The QA/LQA sample separates performed work from practice material.

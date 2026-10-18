@@ -1,12 +1,12 @@
 ---
-import Case from '../components/Case.astro';
-import { PROJECTS, type Project } from '../data/projects';
+import Match from '../components/Match.astro';
+import { MATCHES, type Match as M } from '../data/projects';
 
 export function getStaticPaths() {
-  return PROJECTS.map((project) => ({ params: { slug: project.slug }, props: { project } }));
+  return MATCHES.map((match) => ({ params: { slug: match.slug }, props: { match } }));
 }
 
-const { project } = Astro.props as { project: Project };
+const { match } = Astro.props as { match: M };
 ---
 
-<Case lang="en" project={project} />
+<Match lang="en" match={match} />

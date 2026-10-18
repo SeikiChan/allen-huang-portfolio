@@ -14,10 +14,9 @@ const { lang, title, description, path } = Astro.props;
 const other: Lang = lang === 'en' ? 'zh' : 'en';
 const site = Astro.site;
 const abs = (l: Lang) => (site ? new URL(href(l, path), site).toString() : href(l, path));
-const fonts =
-  lang === 'zh'
-    ? 'https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Noto+Sans+SC:wght@400;500;700&display=swap'
-    : 'https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap';
+const families = ['Big+Shoulders+Display:wght@700;800;900', 'IBM+Plex+Sans:wght@400;500;600', 'JetBrains+Mono:wght@400;600'];
+if (lang === 'zh') families.push('Noto+Sans+SC:wght@400;500;700;900');
+const fonts = `https://fonts.googleapis.com/css2?${families.map((f) => `family=${f}`).join('&')}&display=swap`;
 ---
 
 <!doctype html>
@@ -25,7 +24,7 @@ const fonts =
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#f4f4ec" />
+    <meta name="theme-color" content="#0f2520" />
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={abs(lang)} />
@@ -42,25 +41,24 @@ const fonts =
   </head>
   <body>
     <a class="skip" href="#main">{UI.skip[lang]}</a>
-    <header class="site-header">
+    <header class="topbar">
       <div class="wrap">
-        <a class="wordmark" href={href(lang)} aria-label={UI.home[lang]}>allen<span class="arrow" aria-hidden="true">↗</span><small>HUANG</small></a>
-        <nav class="nav" aria-label={lang === 'en' ? 'Main' : '主导航'}>
-          <a href={`${href(lang)}#work`}>{UI.navWork[lang]}</a>
-          <a class="nav-optional" href={`${href(lang)}#approach`}>{UI.navApproach[lang]}</a>
+        <a class="brand" href={href(lang)} aria-label={UI.home[lang]}><b>Allen Huang</b><span class="mono">{lang === 'en' ? 'AI × Games' : 'AI × 游戏'}</span></a>
+        <nav class="topnav" aria-label={lang === 'en' ? 'Main' : '主导航'}>
+          <a href={`${href(lang)}#matches`}>{UI.navMatches[lang]}</a>
+          <a class="opt" href={`${href(lang)}#player`}>{UI.navPlayer[lang]}</a>
           <a href={`${href(lang)}#contact`}>{UI.navContact[lang]}</a>
-          <a class="lang-switch" href={href(other, path)} hreflang={UI.htmlLang[other]} lang={UI.htmlLang[other]} aria-label={UI.switchLabel[lang]}>{UI.switchTo[lang]}</a>
+          <a class="lang" href={href(other, path)} hreflang={UI.htmlLang[other]} lang={UI.htmlLang[other]} aria-label={UI.switchLabel[lang]}>{UI.switchTo[lang]}</a>
         </nav>
       </div>
     </header>
     <main id="main">
       <slot />
     </main>
-    <footer class="site-footer">
+    <footer class="footer">
       <div class="wrap">
-        <a class="wordmark" href={href(lang)} aria-label={UI.home[lang]}>allen<span class="arrow" aria-hidden="true">↗</span></a>
-        <span>{UI.footerLine[lang]}</span>
-        <span><a href={`mailto:${CONTACT.email}`}>{UI.email[lang]}</a> · <a href={CONTACT.linkedin} rel="noreferrer" target="_blank">LinkedIn</a> · <a href={CONTACT.github} rel="noreferrer" target="_blank">GitHub</a></span>
+        <span>Allen Huang · 2026</span>
+        <span><a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a> · <a href={CONTACT.linkedin} rel="noreferrer" target="_blank">LinkedIn</a> · <a href={CONTACT.github} rel="noreferrer" target="_blank">GitHub</a></span>
       </div>
     </footer>
   </body>
