@@ -23,6 +23,7 @@ export const UI = {
   navWork: { en: 'Work', zh: '作品' },
   navPlayer: { en: 'About', zh: '关于' },
   navContact: { en: 'Contact', zh: '联系' },
+  navLog: { en: 'Changelog', zh: '更新日志' },
   switchTo: { en: '中文', zh: 'EN' },
   switchLabel: { en: '切换到中文', zh: 'Switch to English' },
   home: { en: 'Allen Huang, home', zh: 'Allen Huang，首页' },

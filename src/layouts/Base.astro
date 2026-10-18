@@ -48,6 +48,7 @@ const fonts = `https://fonts.googleapis.com/css2?${families.map((f) => `family=$
         <nav class="nav-links" id="nav-links" aria-label={lang === 'en' ? 'Main' : '主导航'}>
           <a href={`${href(lang)}#work`} data-sec="work">{UI.navWork[lang]}</a>
           <a class="opt" href={`${href(lang)}#about`} data-sec="about">{UI.navPlayer[lang]}</a>
+          <a class="opt" href={href(lang, 'changelog/')} data-sec="log">{UI.navLog[lang]}</a>
           <a href={`${href(lang)}#contact`} data-sec="contact">{UI.navContact[lang]}</a>
           <a class="lang" href={href(other, path)} hreflang={UI.htmlLang[other]} lang={UI.htmlLang[other]} aria-label={UI.switchLabel[lang]}>{UI.switchTo[lang]}</a>
         </nav>
@@ -60,7 +61,7 @@ const fonts = `https://fonts.googleapis.com/css2?${families.map((f) => `family=$
     <footer class="footer">
       <div class="wrap">
         <span>© 2026 Allen Huang</span>
-        <span><a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a> · <a href={CONTACT.linkedin} rel="noreferrer" target="_blank">LinkedIn</a> · <a href={CONTACT.github} rel="noreferrer" target="_blank">GitHub</a></span>
+        <span><a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a> · <a href={CONTACT.linkedin} rel="noreferrer" target="_blank">LinkedIn</a> · <a href={CONTACT.github} rel="noreferrer" target="_blank">GitHub</a> · <a href={href(lang, 'changelog/')}>{UI.navLog[lang]}</a></span>
       </div>
     </footer>
     <script>

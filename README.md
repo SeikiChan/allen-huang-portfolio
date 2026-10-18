@@ -4,22 +4,24 @@ Bilingual (English / 简体中文) portfolio site built with [Astro](https://ast
 
 ## Pages
 
-The site is laid out as a fixture board: each project is a match between two sides, and each project page is a match report (scoreboard, rules, play-by-play, figures).
+Dark product-site layout: the first screen says who I am and what I work on (AI and games); each project is a chapter on the home page and has its own case-study page.
 
-| Path | Match |
+| Path | Page |
 |---|---|
-| `/` and `/zh/` | Home: name, score ribbon, fixture board, highlights, player card, contact |
-| `/ai-portfolio-arena/` | Claude vs GPT: two models trading paper portfolios (no account data shown) |
+| `/` and `/zh/` | Home: intro, project chapters, about, contact |
+| `/ai-portfolio-arena/` | AI Portfolio Arena: two LLMs trading paper portfolios (no account data shown) |
 | `/ai-evaluation/` | GPT vs Claude: 25-case human evaluation, 13–4, 8 draws |
-| `/am-7030/` | AM 70/30 vs SPY: weekly stock model, research log, gate bug (no amounts or returns) |
-| `/ai-news-radar/` | Story vs evidence: research terminal v1.0 |
-| `/debt-runner/` | Player vs debt: four-person Unity roguelite, Spring Show 2026 |
+| `/am-7030/` | AM 70/30: weekly stock model, research log, gate bug (no amounts or returns) |
+| `/ai-news-radar/` | AI News Radar: research terminal v1.0 |
+| `/debt-runner/` | DebtRunner: four-person Unity roguelite, Spring Show 2026 |
+| `/changelog/` | Changelog: every AI-generated version of this site, my review notes and what changed |
 
 Every page exists in both languages; the Chinese version lives under `/zh/`.
 
 ## Where to edit
 
-- **Match text (both languages):** `src/data/projects.ts`. Each string is `{ en, zh }`, so the two versions sit side by side. A match report is a list of blocks (`text`, `rules`, `log`, `figure`), so each project can tell its story in its own order.
+- **Project text (both languages):** `src/data/projects.ts`. Each string is `{ en, zh }`, so the two versions sit side by side. A case page is a list of blocks (`text`, `rules`, `log`, `figure`), so each project can tell its story in its own order.
+- **Changelog:** entries in `src/data/changelog.ts`, screenshots in `src/assets/changelog/` (`name-en` / `name-zh`, or one shared `name`). Old versions are rebuilt from their commits for the screenshots.
 - **Home page text:** `src/components/Home.astro`.
 - **Shared UI strings and contact details:** `src/i18n.ts`.
 - **Figures and diagrams:** `src/components/figures/`.
