@@ -1,0 +1,46 @@
+---
+import type { Lang } from '../../i18n';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+
+// Signal hierarchy from ai-news-radar docs/product_brief.md.
+const tiers = {
+  en: [
+    { name: 'High', note: 'Money or capacity is committed', items: ['Customer prepayment', 'Capacity reservation', 'Multi-year supply agreement', 'Named hyperscaler customer', 'Production order after qualification'] },
+    { name: 'Medium', note: 'Activity without economics', items: ['Product launch', 'Partnership, no terms', 'Analyst upgrade', 'Hiring or capex expansion'] },
+    { name: 'Low', note: 'Words only', items: ['Generic AI mention', 'Unverifiable social rumor', 'Vague memorandum', 'Hype without numbers'] },
+  ],
+  zh: [
+    { name: '高', note: '真金白银或产能已经锁定', items: ['客户预付款', '产能预订', '多年期供货协议', '点名的超大规模云客户', '通过认证后的量产订单'] },
+    { name: '中', note: '有动作，但没有经济条款', items: ['产品发布', '没有条款的合作', '分析师上调评级', '招聘或资本开支扩张'] },
+    { name: '低', note: '只有说法', items: ['泛泛提到 AI', '无法核实的社交传闻', '含糊的合作备忘录', '没有数字的炒作'] },
+  ],
+}[lang];
+---
+
+<figure class="fig tiers">
+  <div class="fig-head mono"><span>{lang === 'en' ? 'Signal hierarchy · from the product brief' : '信号分级 · 摘自产品简报'}</span></div>
+  <div class="cols">
+    {tiers.map((tier, i) => (
+      <div class={`tier t${i}`}>
+        <p class="tier-name">{tier.name}</p>
+        <p class="tier-note">{tier.note}</p>
+        <ul>{tier.items.map((it) => <li>{it}</li>)}</ul>
+      </div>
+    ))}
+  </div>
+</figure>
+
+<style>
+  .cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .tier { border-radius: 8px; padding: 16px; border: 1px solid var(--line-soft); }
+  .t0 { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .t1 { background: var(--paper); }
+  .t2 { background: transparent; border-style: dashed; color: var(--muted); }
+  .tier-name { font-weight: 700; font-size: 1.15rem; margin: 0; }
+  .tier-note { font-size: 13.5px; opacity: 0.8; margin: 2px 0 10px; }
+  ul { margin: 0; padding: 0; list-style: none; font-size: 14.5px; }
+  li { padding: 5px 0; border-top: 1px solid currentColor; border-top-color: color-mix(in srgb, currentColor 18%, transparent); }
+  @media (max-width: 700px) { .cols { grid-template-columns: 1fr; } }
+</style>

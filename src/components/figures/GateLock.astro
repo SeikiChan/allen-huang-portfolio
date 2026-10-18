@@ -1,0 +1,112 @@
+---
+import type { Lang } from '../../i18n';
+
+interface Props { lang: Lang; compact?: boolean }
+const { lang, compact = false } = Astro.props;
+
+// Schematic only: a synthetic strategy path run through both gate bases.
+// Thresholds match the documented gate: red at -18% (exposure 25%), release above -8%.
+const RED = -0.18, RELEASE = -0.08, CUT = 0.25, DAYS = 170;
+const strat: number[] = [];
+for (let t = 0; t <= DAYS; t++) {
+  const fall = 1 - 0.21 * Math.min(t / 42, 1) ** 1.15;
+  const rise = t > 42 ? 0.27 * ((t - 42) / 128) ** 0.95 : 0;
+  strat.push(fall + rise + 0.006 * Math.sin(t * 0.8));
+}
+function run(basis: 'gated' | 'ungated') {
+  let exposure = 1, g = 1, gPeak = 1, sPeak = strat[0];
+  const dd: number[] = [0], exp: number[] = [1];
+  for (let t = 1; t <= DAYS; t++) {
+    const r = strat[t] / strat[t - 1] - 1;
+    g *= 1 + exposure * r;
+    gPeak = Math.max(gPeak, g);
+    sPeak = Math.max(sPeak, strat[t]);
+    const read = basis === 'gated' ? g / gPeak - 1 : strat[t] / sPeak - 1;
+    if (exposure === 1 && read <= RED) exposure = CUT;
+    else if (exposure === CUT && read > RELEASE) exposure = 1;
+    dd.push(basis === 'gated' ? g / gPeak - 1 : strat[t] / sPeak - 1);
+    exp.push(exposure);
+  }
+  return { dd, exp };
+}
+const legacy = run('gated');
+const fixed = run('ungated');
+const releaseDay = fixed.exp.findIndex((e, i) => i > 0 && e === 1 && fixed.exp[i - 1] === CUT);
+const redDay = legacy.exp.findIndex((e) => e === CUT);
+
+const W = 720, H = compact ? 300 : 340, L = compact ? 16 : 56, R = 16, Tp = 18, B = compact ? 16 : 40;
+const x = (t: number) => L + (t / DAYS) * (W - L - R);
+const y = (d: number) => Tp + (-d / 0.25) * (H - Tp - B);
+const path = (arr: number[]) => arr.map((d, t) => `${t ? 'L' : 'M'}${x(t).toFixed(1)} ${y(d).toFixed(1)}`).join('');
+const t = {
+  en: {
+    title: 'Drawdown read by the gate',
+    legacy: 'Legacy: gate reads the already-cut curve',
+    fixed: 'Fix: gate reads the strategy curve',
+    red: 'red −18% → exposure 25%',
+    release: 'release above −8%',
+    stuck: 'still red',
+    released: 'released',
+    caption: 'Schematic with a synthetic path. Not account data.',
+  },
+  zh: {
+    title: '闸门读取的回撤',
+    legacy: '旧口径：闸门读已降仓的曲线',
+    fixed: '修复后：闸门读策略曲线',
+    red: '红灯 −18% → 仓位 25%',
+    release: '回到 −8% 以内才解除',
+    stuck: '仍是红灯',
+    released: '已解除',
+    caption: '用合成路径画的示意图，不是账户数据。',
+  },
+}[lang];
+---
+
+<figure class:list={['fig', 'gate', { compact }]}>
+  {!compact && <div class="fig-head mono"><span>{t.title}</span><span>{lang === 'en' ? 'schematic' : '示意'}</span></div>}
+  <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`${t.legacy}. ${t.fixed}.`}>
+    <rect x={x(redDay)} y={Tp} width={x(DAYS) - x(redDay)} height={H - Tp - B} class="red-zone" />
+    {!compact && [0, -0.05, -0.1, -0.15, -0.2, -0.25].map((d) => (
+      <g class="grid"><line x1={L} x2={W - R} y1={y(d)} y2={y(d)} /><text x={L - 8} y={y(d) + 4} text-anchor="end">{Math.round(d * 100)}%</text></g>
+    ))}
+    <line class="thr red" x1={L} x2={W - R} y1={y(RED)} y2={y(RED)} />
+    <line class="thr rel" x1={L} x2={W - R} y1={y(RELEASE)} y2={y(RELEASE)} />
+    {!compact && <text class="thr-label" x={W - R - 4} y={y(RED) + 16} text-anchor="end">{t.red}</text>}
+    {!compact && <text class="thr-label" x={W - R - 4} y={y(RELEASE) - 7} text-anchor="end">{t.release}</text>}
+    <path d={path(fixed.dd)} class="line fixed" />
+    <path d={path(legacy.dd)} class="line legacy" />
+    {releaseDay > 0 && <line class="marker" x1={x(releaseDay)} x2={x(releaseDay)} y1={Tp} y2={H - B} />}
+    {!compact && releaseDay > 0 && <text class="tag fixed-t" x={x(releaseDay) + 6} y={Tp + 14}>{t.released}</text>}
+    {!compact && <text class="tag legacy-t" x={x(DAYS) - 6} y={y(legacy.dd[DAYS]) - 10} text-anchor="end">{t.stuck}</text>}
+  </svg>
+  <div class="legend">
+    <span><i class="sw legacy"></i>{t.legacy}</span>
+    <span><i class="sw fixed"></i>{t.fixed}</span>
+  </div>
+  {!compact && <figcaption>{t.caption}</figcaption>}
+</figure>
+
+<style>
+  .gate svg { width: 100%; height: auto; display: block; overflow: visible; }
+  .gate.compact { background: var(--paper-2); border: 0; border-radius: 0; display: flex; flex-direction: column; justify-content: center; padding: 14px 18px; gap: 8px; }
+  .red-zone { fill: rgba(179, 38, 30, 0.06); }
+  .grid line { stroke: var(--line-soft); }
+  .grid text { font-family: var(--mono); font-size: 11px; fill: var(--muted); }
+  .thr { stroke-width: 1.2; stroke-dasharray: 5 5; }
+  .thr.red { stroke: #b3261e; }
+  .thr.rel { stroke: var(--muted); }
+  .thr-label { font-family: var(--mono); font-size: 11.5px; fill: var(--ink-2); }
+  .line { fill: none; stroke-width: 3; stroke-linejoin: round; stroke-linecap: round; }
+  .line.legacy { stroke: var(--ink); }
+  .line.fixed { stroke: var(--cobalt); }
+  .marker { stroke: var(--cobalt); stroke-width: 1.2; stroke-dasharray: 2 4; }
+  .tag { font-size: 13px; font-weight: 600; }
+  .fixed-t { fill: var(--cobalt); }
+  .legacy-t { fill: var(--ink); }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13.5px; color: var(--ink-2); margin-top: 10px; }
+  .compact .legend { font-size: 12px; margin-top: 0; }
+  .legend span { display: inline-flex; align-items: center; gap: 8px; }
+  .sw { width: 18px; height: 3px; border-radius: 2px; display: inline-block; }
+  .sw.legacy { background: var(--ink); }
+  .sw.fixed { background: var(--cobalt); }
+</style>

@@ -1,0 +1,74 @@
+---
+import type { Lang } from '../../i18n';
+
+interface Props { lang: Lang; compact?: boolean }
+const { lang, compact = false } = Astro.props;
+
+const t = {
+  en: {
+    collector: 'Collector', collectorSub: 'GET-only market data, news, financials',
+    packet: 'Frozen packet', packetSub: 'one per trading day · ID + SHA-256',
+    engine: 'engine', engineSub: 'own instructions · own state · no tools',
+    validate: 'validate()', validateSub: 'schema, citations, limits — or reject',
+    exec: 'Paper executor', execSub: 'only module that writes to the broker · paper endpoint · DAY limit orders',
+    archive: 'Every round archived: packet, full prompt, raw reply, verdict, source hash',
+    caption: 'System structure. Not live data.',
+  },
+  zh: {
+    collector: '采集方', collectorSub: '只读取行情、新闻、财务数据',
+    packet: '冻结证据包', packetSub: '每个交易日一份 · ID + SHA-256',
+    engine: '引擎', engineSub: '独立指令 · 独立状态 · 无工具',
+    validate: 'validate()', validateSub: '结构、引文、限额——不通过即拒绝',
+    exec: '模拟执行器', execSub: '唯一能写入券商的模块 · 仅模拟端点 · 当日限价单',
+    archive: '每一轮都存档：证据包、完整提示词、原始回复、校验结论、源码哈希',
+    caption: '系统结构示意，不是实时数据。',
+  },
+}[lang];
+const engines = ['Claude', 'GPT'];
+---
+
+<figure class:list={['fig', 'flow', { compact }]} aria-label={lang === 'en' ? 'Arena data flow' : 'Arena 数据流'}>
+  <div class="node soft"><b>{t.collector}</b>{!compact && <span>{t.collectorSub}</span>}</div>
+  <div class="arrow" aria-hidden="true">↓</div>
+  <div class="node key"><b>{t.packet}</b><span>{t.packetSub}</span></div>
+  <div class="fork" aria-hidden="true"><i></i><i></i></div>
+  <div class="pair">
+    {engines.map((e) => (
+      <div class="lane">
+        <div class="node engine"><b>{e} {t.engine}</b>{!compact && <span>{t.engineSub}</span>}</div>
+        <div class="arrow" aria-hidden="true">↓</div>
+        <div class="node gate"><b><code>{t.validate}</code></b>{!compact && <span>{t.validateSub}</span>}</div>
+        <div class="arrow" aria-hidden="true">↓</div>
+        <div class="node soft"><b>{t.exec}</b>{!compact && <span>{t.execSub}</span>}</div>
+      </div>
+    ))}
+  </div>
+  {!compact && <p class="archive mono">{t.archive}</p>}
+  {!compact && <figcaption>{t.caption}</figcaption>}
+</figure>
+
+<style>
+  .flow { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .flow.compact { background: #e3e8f7; border: 0; border-radius: 0; justify-content: center; padding: 14px; gap: 2px; }
+  .node { border: 1px solid var(--line); background: var(--card); border-radius: 8px; padding: 10px 14px; text-align: center; display: grid; gap: 2px; width: 100%; max-width: 360px; }
+  .node b { font-size: 15px; }
+  .node span { font-size: 12.5px; color: var(--muted); line-height: 1.45; }
+  .node.key { border: 1.5px solid var(--ink); }
+  .node.engine { border-color: var(--cobalt); }
+  .node.engine b { color: var(--cobalt); }
+  .node.gate { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .node.gate span { color: #c4d0c8; }
+  .node.gate code { background: none; color: inherit; padding: 0; font-size: 14px; }
+  .arrow { color: var(--muted); line-height: 1; font-size: 14px; }
+  .fork { position: relative; width: 50%; height: 16px; border: 1.5px solid var(--line); border-bottom: 0; border-radius: 6px 6px 0 0; margin-top: 4px; }
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; width: 100%; }
+  .lane { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .archive { margin: 12px 0 0; text-align: center; color: var(--ink-2); border-top: 1px dashed var(--line); padding-top: 12px; width: 100%; text-transform: none; letter-spacing: 0.02em; }
+  .flow figcaption { align-self: stretch; }
+  .compact .node { padding: 5px 8px; max-width: 220px; }
+  .compact .node b { font-size: 12.5px; }
+  .compact .node span { font-size: 10.5px; }
+  .compact .arrow { font-size: 11px; }
+  .compact .fork { height: 10px; }
+  .compact .node.gate code { font-size: 12px; }
+</style>

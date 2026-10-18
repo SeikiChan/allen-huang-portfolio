@@ -1,0 +1,65 @@
+---
+import { Image } from 'astro:assets';
+import type { Lang } from '../../i18n';
+import Placeholder from '../Placeholder.astro';
+import title from '../../assets/debt-runner/title.webp';
+import gameplay from '../../assets/debt-runner/gameplay.webp';
+import levelUp from '../../assets/debt-runner/level-up.webp';
+import shop from '../../assets/debt-runner/shop.webp';
+
+interface Props { lang: Lang; view: 'title' | 'gallery' | 'loop' | 'video'; compact?: boolean }
+const { lang, view, compact = false } = Astro.props;
+
+const alt = {
+  title: { en: 'DebtRunner title screen: a neon “Welcome” sign over a red stage curtain, with Start, Setting, Credit and Exit buttons', zh: 'DebtRunner 标题画面：红色舞台幕布前的霓虹“Welcome”招牌，带开始、设置、制作人员和退出按钮' },
+  gameplay: { en: 'Gameplay: the player runs from coin monsters while a round timer and debt target show at the top', zh: '游戏画面：玩家躲避金币怪物，顶部显示回合计时和债务目标' },
+  levelUp: { en: 'Level-up screen offering three upgrade cards: Double Entry, Final Notice and Return to Sender', zh: '升级界面：三张强化卡可选，Double Entry、Final Notice 和 Return to Sender' },
+  shop: { en: 'Between-round shop with upgrades for sale and a prize wheel with cash, debt and enemy segments', zh: '回合间商店：出售强化道具，旁边是带现金、加债、加怪等格子的转盘' },
+};
+const cap = {
+  gameplay: { en: 'Round 1 of 10: collect the debt before the timer ends.', zh: '第 1 / 10 回合：在倒计时结束前凑齐债务。' },
+  levelUp: { en: 'Level-up: pick one of three cards.', zh: '升级：三选一强化卡。' },
+  shop: { en: 'Shop and wheel between rounds.', zh: '回合间的商店与转盘。' },
+};
+const loop = {
+  en: ['Game state', 'Movement', 'Auto-target combat', 'Enemy spawning', 'Projectiles', 'XP & level-up', 'Settlement', 'Shop', 'Game over'],
+  zh: ['游戏状态', '移动', '自动瞄准战斗', '敌人生成', '投射物', '经验与升级', '结算', '商店', '游戏结束'],
+}[lang];
+---
+
+{view === 'title' && (compact
+  ? <Image src={title} alt={alt.title[lang]} widths={[480, 800]} sizes="(max-width: 760px) 92vw, 560px" />
+  : <figure class="fig fig-plain"><Image class="shot" src={title} alt={alt.title[lang]} widths={[800, 1200, 1600]} sizes="(max-width: 1240px) 94vw, 1200px" loading="eager" /></figure>
+)}
+
+{view === 'gallery' && (
+  <div class="gallery">
+    <figure class="wide"><Image class="shot" src={gameplay} alt={alt.gameplay[lang]} widths={[800, 1200]} sizes="(max-width: 1240px) 94vw, 1200px" /><figcaption>{cap.gameplay[lang]}</figcaption></figure>
+    <figure><Image class="shot" src={levelUp} alt={alt.levelUp[lang]} widths={[600, 900]} sizes="(max-width: 640px) 94vw, 600px" /><figcaption>{cap.levelUp[lang]}</figcaption></figure>
+    <figure><Image class="shot" src={shop} alt={alt.shop[lang]} widths={[600, 900]} sizes="(max-width: 640px) 94vw, 600px" /><figcaption>{cap.shop[lang]}</figcaption></figure>
+  </div>
+)}
+
+{view === 'loop' && (
+  <figure class="fig">
+    <ol class="loop">
+      {loop.map((s, i) => <li><span class="mono">{String(i + 1).padStart(2, '0')}</span>{s}</li>)}
+    </ol>
+    <figcaption>{lang === 'en' ? 'Shop leads back into the next round until the run ends.' : '商店之后进入下一回合，直到本局结束。'}</figcaption>
+  </figure>
+)}
+
+{view === 'video' && (
+  <Placeholder
+    lang={lang}
+    title={lang === 'en' ? 'Gameplay video, 60–90 seconds' : '游戏实机视频，60–90 秒'}
+    note={lang === 'en' ? 'One full round: combat, a level-up choice, and the shop. To be supplied.' : '一个完整回合：战斗、一次升级选择、商店。素材待提供。'}
+  />
+)}
+
+<style>
+  .loop { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .loop li { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px 8px 10px; border-radius: 999px; background: var(--paper); border: 1px solid var(--line-soft); font-size: 14.5px; }
+  .loop li .mono { color: var(--cobalt); font-size: 11px; }
+  .loop li:not(:last-child)::after { content: '→'; color: var(--muted); margin-left: 6px; }
+</style>

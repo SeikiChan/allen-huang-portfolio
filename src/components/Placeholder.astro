@@ -1,0 +1,14 @@
+---
+import { UI, type Lang } from '../i18n';
+
+interface Props { lang: Lang; title: string; note: string }
+const { lang, title, note } = Astro.props;
+---
+
+<div class="placeholder" role="note">
+  <div>
+    <span class="mono">{UI.placeholder[lang]}</span>
+    <strong>{title}</strong>
+    <p>{note}</p>
+  </div>
+</div>

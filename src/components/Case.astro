@@ -1,0 +1,64 @@
+---
+import Base from '../layouts/Base.astro';
+import Figure from './Figure.astro';
+import { UI, href, type Lang } from '../i18n';
+import { PROJECTS, type Project } from '../data/projects';
+
+interface Props { lang: Lang; project: Project }
+const { lang, project: p } = Astro.props;
+
+const i = PROJECTS.indexOf(p);
+const next = PROJECTS[(i + 1) % PROJECTS.length];
+const privateRepo = lang === 'en' ? 'Private repository' : '私有仓库';
+---
+
+<Base lang={lang} title={`${p.name[lang]} — Allen Huang`} description={p.summary[lang]} path={`${p.slug}/`}>
+  <section class="case-hero">
+    <div class="wrap">
+      <p class="crumbs mono"><a href={`${href(lang)}#work`}>← {UI.allWork[lang]}</a><span aria-hidden="true">/</span><span>{p.kicker[lang]}</span></p>
+      <h1>{p.name[lang]}</h1>
+      <p class="case-lede">{p.lede[lang]}</p>
+      <dl class="case-meta">
+        <div><dt class="mono">{UI.role[lang]}</dt><dd>{p.role[lang]}</dd></div>
+        <div><dt class="mono">{UI.when[lang]}</dt><dd>{p.when[lang]}</dd></div>
+        <div><dt class="mono">{UI.built[lang]}</dt><dd>{p.stack.join(' · ')}</dd></div>
+        <div><dt class="mono">{UI.links[lang]}</dt><dd>
+          {p.links.length
+            ? p.links.map((l) => <a href={l.url} target="_blank" rel="noreferrer">{l.label[lang]} ↗</a>)
+            : <span class="muted">{privateRepo}</span>}
+        </dd></div>
+      </dl>
+      <div class="case-stats">
+        {p.stats.map((s) => <div><strong>{s.value}</strong><span>{s.label[lang]}</span></div>)}
+      </div>
+      {p.hero && <div class="case-figure-hero"><Figure id={p.hero} lang={lang} /></div>}
+    </div>
+  </section>
+
+  {p.sections.map((s, n) => (
+    <section class="case-section">
+      <div class="wrap case-section-grid">
+        <div>
+          <p class="kicker mono">{String(n + 1).padStart(2, '0')} / {s.kicker[lang]}</p>
+          <h2>{s.heading[lang]}</h2>
+        </div>
+        <div class="prose">
+          {s.body.map((b) => <p set:html={b[lang]} />)}
+          {s.bullets && <ul>{s.bullets.map((b) => <li set:html={b[lang]} />)}</ul>}
+        </div>
+        {s.figure && <div class="figure-slot"><Figure id={s.figure} lang={lang} /></div>}
+      </div>
+    </section>
+  ))}
+
+  <section class="wrap">
+    <aside class="limits">
+      <p class="mono">{UI.limits[lang]}</p>
+      <p>{p.limits[lang]}</p>
+    </aside>
+    <a class="next-case" href={href(lang, `${next.slug}/`)} style="margin-top: clamp(40px, 6vw, 72px)">
+      <span><span class="mono muted">{UI.next[lang]}</span><strong>{next.name[lang]}</strong></span>
+      <span class="arrow-link" aria-hidden="true">→</span>
+    </a>
+  </section>
+</Base>

@@ -1,0 +1,42 @@
+---
+import type { Lang } from '../../i18n';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+
+// Summarised from docs/claude_gpt_portfolio_prompt_design_20261009.md §4 and ENGINE_CONTRACT.md in ai-portfolio-arena.
+const rows = {
+  en: [
+    ['Numbers are not retyped', 'Holdings cite packet fields such as <code>price:MSFT#mean_20d</code>; the report layer prints the value.', 'Reject'],
+    ['Quotes are real', 'Every quoted sentence must be a verbatim substring of the evidence it cites.', 'Reject'],
+    ['Macro claims are sourced', 'The packet holds no macro series, so each macro claim must cite a news item.', 'Reject'],
+    ['Actions are consistent', '“exit” and “watch” must carry a target weight of 0.', 'Reject'],
+    ['Changes are explained', 'After a previous decision exists, every holding states what changed.', 'Reject'],
+    ['Injection stays data', 'Suspicious instructions in news are flagged by evidence ID, never followed.', 'Flag'],
+    ['Broker access is narrow', 'One module, a hard-coded paper endpoint, DAY limit orders only.', 'No other path'],
+  ],
+  zh: [
+    ['数字不许重打', '持仓只能引用证据包字段，例如 <code>price:MSFT#mean_20d</code>，数值由报告层打印。', '拒绝'],
+    ['引文必须真实', '每条引文都必须是所引证据的原文子串。', '拒绝'],
+    ['宏观说法要有来源', '证据包里没有宏观序列，所以每条宏观说法都必须挂一条新闻。', '拒绝'],
+    ['动作前后一致', '“退出”和“观察”的目标权重必须为 0。', '拒绝'],
+    ['变化要说明', '有上一轮决定时，每个持仓都要写明变了什么。', '拒绝'],
+    ['注入只是数据', '新闻里的可疑指令按证据 ID 标记，绝不执行。', '标记'],
+    ['券商权限收窄', '只有一个模块，写死模拟端点，只发当日限价单。', '无其他路径'],
+  ],
+}[lang];
+const head = lang === 'en' ? ['Rule', 'What the code checks', 'On failure'] : ['规则', '代码检查什么', '不通过时'];
+---
+
+<figure class="fig">
+  <div class="table-wrap">
+    <table class="data">
+      <thead><tr>{head.map((h) => <th>{h}</th>)}</tr></thead>
+      <tbody>
+        {rows.map(([rule, check, fail]) => (
+          <tr><td><strong>{rule}</strong></td><td set:html={check} /><td class="fail">{fail}</td></tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</figure>

@@ -1,0 +1,67 @@
+---
+import '../styles/global.css';
+import { CONTACT, UI, href, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+  title: string;
+  description: string;
+  /** Path of this page without the language prefix, e.g. '' or 'debt-runner/'. Used for the language switch and hreflang. */
+  path: string;
+}
+
+const { lang, title, description, path } = Astro.props;
+const other: Lang = lang === 'en' ? 'zh' : 'en';
+const site = Astro.site;
+const abs = (l: Lang) => (site ? new URL(href(l, path), site).toString() : href(l, path));
+const fonts =
+  lang === 'zh'
+    ? 'https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Noto+Sans+SC:wght@400;500;700&display=swap'
+    : 'https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap';
+---
+
+<!doctype html>
+<html lang={UI.htmlLang[lang]}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f4f4ec" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={abs(lang)} />
+    <link rel="alternate" hreflang="en" href={abs('en')} />
+    <link rel="alternate" hreflang="zh-CN" href={abs('zh')} />
+    <link rel="alternate" hreflang="x-default" href={abs('en')} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <link rel="icon" href={`${import.meta.env.BASE_URL.replace(/\/?$/, '/')}favicon.svg`} type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href={fonts} />
+  </head>
+  <body>
+    <a class="skip" href="#main">{UI.skip[lang]}</a>
+    <header class="site-header">
+      <div class="wrap">
+        <a class="wordmark" href={href(lang)} aria-label={UI.home[lang]}>allen<span class="arrow" aria-hidden="true">↗</span><small>HUANG</small></a>
+        <nav class="nav" aria-label={lang === 'en' ? 'Main' : '主导航'}>
+          <a href={`${href(lang)}#work`}>{UI.navWork[lang]}</a>
+          <a class="nav-optional" href={`${href(lang)}#approach`}>{UI.navApproach[lang]}</a>
+          <a href={`${href(lang)}#contact`}>{UI.navContact[lang]}</a>
+          <a class="lang-switch" href={href(other, path)} hreflang={UI.htmlLang[other]} lang={UI.htmlLang[other]} aria-label={UI.switchLabel[lang]}>{UI.switchTo[lang]}</a>
+        </nav>
+      </div>
+    </header>
+    <main id="main">
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <div class="wrap">
+        <a class="wordmark" href={href(lang)} aria-label={UI.home[lang]}>allen<span class="arrow" aria-hidden="true">↗</span></a>
+        <span>{UI.footerLine[lang]}</span>
+        <span><a href={`mailto:${CONTACT.email}`}>{UI.email[lang]}</a> · <a href={CONTACT.linkedin} rel="noreferrer" target="_blank">LinkedIn</a> · <a href={CONTACT.github} rel="noreferrer" target="_blank">GitHub</a></span>
+      </div>
+    </footer>
+  </body>
+</html>
