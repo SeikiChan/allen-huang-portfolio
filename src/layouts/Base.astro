@@ -42,15 +42,19 @@ const fonts = `https://fonts.googleapis.com/css2?${families.map((f) => `family=$
   </head>
   <body>
     <a class="skip" href="#main">{UI.skip[lang]}</a>
-    <header class="nav">
+    <header class="nav" id="nav">
       <div class="nav-inner">
         <a class="brand" href={href(lang)} aria-label={UI.home[lang]}><i aria-hidden="true"></i>Allen Huang</a>
-        <nav class="nav-links" aria-label={lang === 'en' ? 'Main' : '主导航'}>
-          <a href={`${href(lang)}#work`}>{UI.navWork[lang]}</a>
-          <a class="opt" href={`${href(lang)}#about`}>{UI.navPlayer[lang]}</a>
-          <a href={`${href(lang)}#contact`}>{UI.navContact[lang]}</a>
+        <button class="nav-now" id="nav-now" type="button" aria-controls="nav-links" aria-expanded="true" aria-label={lang === 'en' ? 'Show navigation' : '展开导航'}>
+          <span class="now-in"><span class="now-label" id="nav-label"></span><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 3.5 5 6.5 8 3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" /></svg></span>
+        </button>
+        <nav class="nav-links" id="nav-links" aria-label={lang === 'en' ? 'Main' : '主导航'}>
+          <a href={`${href(lang)}#work`} data-sec="work">{UI.navWork[lang]}</a>
+          <a class="opt" href={`${href(lang)}#about`} data-sec="about">{UI.navPlayer[lang]}</a>
+          <a href={`${href(lang)}#contact`} data-sec="contact">{UI.navContact[lang]}</a>
           <a class="lang" href={href(other, path)} hreflang={UI.htmlLang[other]} lang={UI.htmlLang[other]} aria-label={UI.switchLabel[lang]}>{UI.switchTo[lang]}</a>
         </nav>
+        <span class="nav-bar" aria-hidden="true"><i></i></span>
       </div>
     </header>
     <main id="main">
@@ -63,6 +67,9 @@ const fonts = `https://fonts.googleapis.com/css2?${families.map((f) => `family=$
       </div>
     </footer>
     <script>
+      import { initNav } from '../scripts/nav';
+      initNav();
+
       // Reveal on scroll. Content is visible without this script; it only adds the entrance.
       const io = new IntersectionObserver(
         (entries) => entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }),
