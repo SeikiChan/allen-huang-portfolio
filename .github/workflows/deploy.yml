@@ -32,7 +32,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Build
-        # Only dist/ is published, so drafts such as design-concepts/ stay out of the public site.
+        # Only dist/ is published.
         run: npx astro build --site "${{ steps.pages.outputs.origin }}" --base "${{ steps.pages.outputs.base_path }}/"
       - name: Upload site
         uses: actions/upload-pages-artifact@v4

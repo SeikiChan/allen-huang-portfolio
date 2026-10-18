@@ -47,7 +47,7 @@ Requires Node 22.12 or newer.
 
 `.github/workflows/deploy.yml` builds the site and publishes `dist/` to GitHub Pages on every push to `main`. In the repository settings, set Pages → Source to **GitHub Actions**. The workflow passes the Pages URL and base path to the build, so links work at a project URL and at a custom domain.
 
-Only `dist/` is published. `design-concepts/` holds earlier design explorations and is not part of the public site.
+Only `dist/` is published.
 
 ## Content boundaries
 
