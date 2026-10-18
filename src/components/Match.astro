@@ -2,94 +2,97 @@
 import Base from '../layouts/Base.astro';
 import Figure from './Figure.astro';
 import { UI, href, type Lang } from '../i18n';
-import { MATCHES, type Match } from '../data/projects';
+import { MATCHES, type Match, type FigureId } from '../data/projects';
 
 interface Props { lang: Lang; match: Match }
 const { lang, match: m } = Astro.props;
 
 const next = MATCHES[(MATCHES.indexOf(m) + 1) % MATCHES.length];
 const vs = lang === 'en' ? 'vs' : '对';
+// Figures drawn as light documents get a paper card; screenshots and galleries sit directly on the page.
+const onPaper = new Set<FigureId>(['eval-tally', 'eval-box', 'eval-case', 'arena-flow', 'am-formation', 'gate-lock', 'radar-tiers', 'debt-loop']);
 ---
 
 <Base lang={lang} title={`${m.title[lang]} — Allen Huang`} description={m.line[lang]} path={`${m.slug}/`}>
-  <section class="scoreboard">
+  <section class:list={['p-hero', { game: m.track === 'game' }]}>
     <div class="wrap">
-      <div class="sb-top mono">
-        <a href={`${href(lang)}#work`}>← {UI.back[lang]}</a>
-        <span class={`status ${m.status}`}>{m.statusLabel[lang]}</span>
-      </div>
-      <div class="sb-head">
+      <a class="p-back" href={`${href(lang)}#work`}>← {UI.back[lang]}</a>
+      <div class="p-top">
         <div>
-          <p class="sb-cat">{m.category[lang]} · {m.dates[lang]}</p>
-          <h1 class="display display-zh">{m.title[lang]}</h1>
-          <p class="sb-lead">{m.line[lang]}</p>
+          <h1 class="grad">{m.title[lang]}</h1>
+          <p class="p-cat">{m.category[lang]} · {m.dates[lang]}</p>
+          <p class="p-lead">{m.line[lang]}</p>
         </div>
         {m.versus ? (
           <div class="vs" aria-label={`${m.home.name[lang]} ${vs} ${m.away.name[lang]}`}>
-            <div class="vs-side home"><strong>{m.home.name[lang]}</strong><span>{m.home.note[lang]}</span></div>
-            <div class:list={['sb-score', { live: m.status === 'live' }]}><strong>{m.score.value[lang]}</strong><span>{m.score.label[lang]}</span></div>
-            <div class="vs-side away"><strong>{m.away.name[lang]}</strong><span>{m.away.note[lang]}</span></div>
+            <div class="side home"><strong>{m.home.name[lang]}</strong><span>{m.home.note[lang]}</span></div>
+            <div class="mid"><strong>{m.score.value[lang]}</strong><span>{m.score.label[lang]}</span></div>
+            <div class="side away"><strong>{m.away.name[lang]}</strong><span>{m.away.note[lang]}</span></div>
           </div>
         ) : (
-          <div class="vs solo"><div class="sb-score"><strong>{m.score.value[lang]}</strong><span>{m.score.label[lang]}</span></div></div>
+          <div class="vs"><div class="mid" style="border: 0"><strong>{m.score.value[lang]}</strong><span>{m.score.label[lang]}</span></div></div>
         )}
       </div>
-      <dl class="sb-meta">
+      <dl class="p-meta">
         <div><dt>{UI.role[lang]}</dt><dd>{m.role[lang]}</dd></div>
         <div><dt>{UI.built[lang]}</dt><dd>{m.stack}</dd></div>
+        <div><dt>{lang === 'en' ? 'Status' : '状态'}</dt><dd>{m.statusLabel[lang]}</dd></div>
         <div><dt>{UI.links[lang]}</dt><dd>{m.links.length ? m.links.map((l) => <a href={l.url} target="_blank" rel="noreferrer">{l.label[lang]} ↗</a>) : UI.privateRepo[lang]}</dd></div>
       </dl>
     </div>
   </section>
 
-  {m.blocks.map((b) => (
-    <section class="block">
-      <div class="wrap">
-        <div class="block-head">
-          <p class="tag mono">{b.tag[lang]}</p>
-          <div class="block-body">
-            <h2 class="display display-zh">{b.heading[lang]}</h2>
-            {b.kind === 'text' && <div class="prose">{b.body.map((p) => <p set:html={p[lang]} />)}</div>}
-            {b.kind === 'figure' && b.body && <div class="prose">{b.body.map((p) => <p set:html={p[lang]} />)}</div>}
-            {b.kind === 'rules' && b.intro && <div class="prose"><p>{b.intro[lang]}</p></div>}
-            {b.kind === 'log' && b.intro && <div class="prose"><p>{b.intro[lang]}</p></div>}
+  {m.blocks.map((b) => {
+    const fig = b.kind === 'figure' ? b.figure : b.kind === 'text' ? b.figure : undefined;
+    return (
+      <section class="block">
+        <div class="wrap">
+          <div class="block-head reveal">
+            <p class="tag">{b.tag[lang]}</p>
+            <div class="block-body">
+              <h2>{b.heading[lang]}</h2>
+              {(b.kind === 'text' || b.kind === 'figure') && b.body && <div class="prose">{b.body.map((p) => <p set:html={p[lang]} />)}</div>}
+              {(b.kind === 'rules' || b.kind === 'log') && b.intro && <div class="prose"><p>{b.intro[lang]}</p></div>}
+            </div>
           </div>
+          {b.kind === 'rules' && (
+            <div class="rules reveal" style={`--cols: ${b.rules.length % 3 === 0 ? 3 : b.rules.length % 4 === 0 ? 4 : 2}`}>
+              {b.rules.map((r, i) => (
+                <article class="rule">
+                  <span class="rn">{String(i + 1).padStart(2, '0')}</span>
+                  <h3>{r.title[lang]}</h3>
+                  <p set:html={r.body[lang]} />
+                </article>
+              ))}
+            </div>
+          )}
+          {b.kind === 'log' && (
+            <ol class="log reveal">
+              {b.entries.map((e) => (
+                <li class:list={{ key: e.key }}>
+                  <time>{e.date === 'Now' ? (lang === 'en' ? 'Now' : '现在') : e.date}</time>
+                  <div>
+                    <h3>{e.key && <span class="kp">{lang === 'en' ? 'KEY MOMENT' : '关键节点'}</span>}{e.title[lang]}</h3>
+                    {e.body && <p set:html={e.body[lang]} />}
+                  </div>
+                </li>
+              ))}
+            </ol>
+          )}
+          {fig && (
+            <div class="block-wide reveal">
+              {onPaper.has(fig) ? <div class="paper paper-card"><Figure id={fig} lang={lang} /></div> : <Figure id={fig} lang={lang} />}
+            </div>
+          )}
         </div>
-        {b.kind === 'rules' && (
-          <div class="rules" style={`--cols: ${b.rules.length % 3 === 0 ? 3 : b.rules.length % 4 === 0 ? 4 : 2}`}>
-            {b.rules.map((r, i) => (
-              <article class="rule">
-                <span class="rn">{lang === 'en' ? `R${i + 1}` : `第${i + 1}条`}</span>
-                <h3>{r.title[lang]}</h3>
-                <p set:html={r.body[lang]} />
-              </article>
-            ))}
-          </div>
-        )}
-        {b.kind === 'log' && (
-          <ol class="log">
-            {b.entries.map((e) => (
-              <li class:list={{ key: e.key }}>
-                <time>{e.date === 'Now' ? (lang === 'en' ? 'Now' : '现在') : e.date}</time>
-                <div>
-                  <h3>{e.key && <span class="kp">{lang === 'en' ? 'Key moment' : '关键节点'}</span>}{e.title[lang]}</h3>
-                  {e.body && <p set:html={e.body[lang]} />}
-                </div>
-              </li>
-            ))}
-          </ol>
-        )}
-        {(b.kind === 'figure' || (b.kind === 'text' && b.figure)) && (
-          <div class="block-wide"><Figure id={b.kind === 'figure' ? b.figure : b.figure!} lang={lang} /></div>
-        )}
-      </div>
-    </section>
-  ))}
+      </section>
+    );
+  })}
 
-  <div class="wrap" style="border-top: 3px solid var(--ink)">
+  <div class="wrap">
     <a class="next" href={href(lang, `${next.slug}/`)}>
-      <span><small class="mono">{UI.next[lang]}</small><strong>{next.title[lang]}</strong></span>
-      <span class="arrow" aria-hidden="true">→</span>
+      <span><small>{UI.next[lang]}</small><strong>{next.title[lang]}</strong></span>
+      <span class="arr" aria-hidden="true">→</span>
     </a>
   </div>
 </Base>

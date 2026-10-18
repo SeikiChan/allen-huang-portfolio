@@ -14,8 +14,8 @@ const { lang, title, description, path } = Astro.props;
 const other: Lang = lang === 'en' ? 'zh' : 'en';
 const site = Astro.site;
 const abs = (l: Lang) => (site ? new URL(href(l, path), site).toString() : href(l, path));
-const families = ['Big+Shoulders+Display:wght@700;800;900', 'IBM+Plex+Sans:wght@400;500;600', 'JetBrains+Mono:wght@400;600'];
-if (lang === 'zh') families.push('Noto+Sans+SC:wght@400;500;700;900');
+const families = ['Geist:wght@400;500;600;700', 'Geist+Mono:wght@400;500'];
+if (lang === 'zh') families.push('Noto+Sans+SC:wght@400;500;600;700');
 const fonts = `https://fonts.googleapis.com/css2?${families.map((f) => `family=${f}`).join('&')}&display=swap`;
 ---
 
@@ -24,7 +24,7 @@ const fonts = `https://fonts.googleapis.com/css2?${families.map((f) => `family=$
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#0f2520" />
+    <meta name="theme-color" content="#0a0f0d" />
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={abs(lang)} />
@@ -38,15 +38,16 @@ const fonts = `https://fonts.googleapis.com/css2?${families.map((f) => `family=$
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href={fonts} />
+    <script is:inline>document.documentElement.classList.add('js');</script>
   </head>
   <body>
     <a class="skip" href="#main">{UI.skip[lang]}</a>
-    <header class="topbar">
-      <div class="wrap">
-        <a class="brand" href={href(lang)} aria-label={UI.home[lang]}><b>Allen Huang</b><span class="mono">{lang === 'en' ? 'AI × Games' : 'AI × 游戏'}</span></a>
-        <nav class="topnav" aria-label={lang === 'en' ? 'Main' : '主导航'}>
+    <header class="nav">
+      <div class="nav-inner">
+        <a class="brand" href={href(lang)} aria-label={UI.home[lang]}><i aria-hidden="true"></i>Allen Huang</a>
+        <nav class="nav-links" aria-label={lang === 'en' ? 'Main' : '主导航'}>
           <a href={`${href(lang)}#work`}>{UI.navWork[lang]}</a>
-          <a class="opt" href={`${href(lang)}#player`}>{UI.navPlayer[lang]}</a>
+          <a class="opt" href={`${href(lang)}#about`}>{UI.navPlayer[lang]}</a>
           <a href={`${href(lang)}#contact`}>{UI.navContact[lang]}</a>
           <a class="lang" href={href(other, path)} hreflang={UI.htmlLang[other]} lang={UI.htmlLang[other]} aria-label={UI.switchLabel[lang]}>{UI.switchTo[lang]}</a>
         </nav>
@@ -57,9 +58,17 @@ const fonts = `https://fonts.googleapis.com/css2?${families.map((f) => `family=$
     </main>
     <footer class="footer">
       <div class="wrap">
-        <span>Allen Huang · 2026</span>
+        <span>© 2026 Allen Huang</span>
         <span><a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a> · <a href={CONTACT.linkedin} rel="noreferrer" target="_blank">LinkedIn</a> · <a href={CONTACT.github} rel="noreferrer" target="_blank">GitHub</a></span>
       </div>
     </footer>
+    <script>
+      // Reveal on scroll. Content is visible without this script; it only adds the entrance.
+      const io = new IntersectionObserver(
+        (entries) => entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }),
+        { rootMargin: '0px 0px -8% 0px' },
+      );
+      document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+    </script>
   </body>
 </html>

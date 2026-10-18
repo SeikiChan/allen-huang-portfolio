@@ -32,6 +32,8 @@ export interface Match {
   category: T;
   /** Show the two-sided head-to-head strip. Only for projects that are literally a contest. */
   versus: boolean;
+  /** Three short facts for the home-page chapter. */
+  facts: { value: T; label: T }[];
   track: 'ai' | 'game';
   status: Status;
   statusLabel: T;
@@ -56,6 +58,7 @@ export const MATCHES: Match[] = [
     slug: 'ai-portfolio-arena',
     category: S('AI experiment · Claude vs GPT trading', 'AI 实验 · Claude 对 GPT 炒股'),
     versus: true,
+    facts: [{ value: S('2', '2'), label: S('models, separate accounts', '个模型，账户分开') }, { value: S('20', '20'), label: S('stocks in the pool, 10 max held', '只股票池，最多持 10 只') }, { value: S('Daily', '每天'), label: S('one frozen data packet at 10:00 ET', '美东 10:00 冻结一份数据') }],
     track: 'ai',
     status: 'live',
     statusLabel: S('Live · season 1', '进行中 · 第一季'),
@@ -140,6 +143,7 @@ export const MATCHES: Match[] = [
     slug: 'ai-evaluation',
     category: S('AI evaluation · 25 cases, human-scored', 'AI 评估 · 25 道题，人工评分'),
     versus: true,
+    facts: [{ value: S('25', '25'), label: S('cases, answer key written first', '道题，先写标准答案') }, { value: S('5', '5'), label: S('scored dimensions', '个评分维度') }, { value: S('13·4·8', '13·4·8'), label: S('GPT · Claude · draws', 'GPT · Claude · 平局') }],
     track: 'ai',
     status: 'final',
     statusLabel: S('Completed', '已完成'),
@@ -196,6 +200,7 @@ export const MATCHES: Match[] = [
     slug: 'am-7030',
     category: S('Quant research · live weekly stock model', '量化研究 · 实盘周度选股模型'),
     versus: true,
+    facts: [{ value: S('Weekly', '每周'), label: S('rebalance, live since Jun 2026', '调仓，2026 年 6 月上实盘') }, { value: S('10', '10'), label: S('rules tested one by one', '条规则逐条检验') }, { value: S('22 → 0', '22 → 0'), label: S('add-ons tested → shipped', '个增强项测试 → 上线') }],
     track: 'ai',
     status: 'live',
     statusLabel: S('Live · weekly', '实盘 · 每周调仓'),
@@ -251,6 +256,7 @@ export const MATCHES: Match[] = [
     slug: 'ai-news-radar',
     category: S('Research tool · released v1.0', '研究工具 · 已发布 v1.0'),
     versus: false,
+    facts: [{ value: S('v1.0', 'v1.0'), label: S('public release', '公开发布') }, { value: S('218', '218'), label: S('automated tests', '个自动化测试') }, { value: S('2 × 2', '2 × 2'), label: S('CI: Windows/Ubuntu × Py 3.10/3.12', 'CI：两系统 × 两版本') }],
     track: 'ai',
     status: 'shipped',
     statusLabel: S('Released v1.0', '已发布 v1.0'),
@@ -312,6 +318,7 @@ export const MATCHES: Match[] = [
     slug: 'debt-runner',
     category: S('Game · Unity roguelite, team of four', '游戏 · Unity roguelite，四人团队'),
     versus: false,
+    facts: [{ value: S('4', '4'), label: S('people on the team', '人团队') }, { value: S('4 wks', '4 周'), label: S('to a playable v1.0', '做出可玩的 v1.0') }, { value: S('33', '33'), label: S('builds to the show version', '次提交到展出版本') }],
     track: 'game',
     status: 'shipped',
     statusLabel: S('Spring Show 2026', '2026 春季作品展'),

@@ -1,188 +1,254 @@
 ---
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
-import { CONTACT, UI, href, type Lang } from '../i18n';
-import { MATCHES } from '../data/projects';
+import EvalTally from './figures/EvalTally.astro';
+import AmFormation from './figures/AmFormation.astro';
+import { CONTACT, href, type Lang } from '../i18n';
+import { MATCHES, getMatch } from '../data/projects';
 import title from '../assets/debt-runner/title.webp';
 import gameplay from '../assets/debt-runner/gameplay.webp';
 import levelUp from '../assets/debt-runner/level-up.webp';
-import shop from '../assets/debt-runner/shop.webp';
 import radarEn from '../assets/news-radar/dashboard-en.png';
 import radarZh from '../assets/news-radar/dashboard-zh.png';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
+const radar = lang === 'en' ? radarEn : radarZh;
 
 const c = {
   en: {
-    title: 'Allen Huang — AI tools and games',
-    desc: 'Allen Huang builds AI tools and games: Claude vs GPT trading, a model evaluation, a live stock model, a research terminal, and a Unity roguelite.',
-    kicker: ['Portfolio', '2026'],
-    role: 'AI evaluation & tools · Game production & QA',
-    intro: 'I design experiments that test AI models, build research tools around them, and run my own trading model live. On the game side I lead small teams: DebtRunner went from first commit to a playable build in four weeks and was selected for the AAU Spring Show.',
-    ribbon: [
-      ['live', 'Running', 'AI Portfolio Arena', 'Claude vs GPT'],
-      ['', 'Done', 'Model evaluation', 'GPT 13–4 Claude'],
-      ['live', 'Live', 'AM 70/30', 'weekly stock model'],
-      ['', 'v1.0', 'AI News Radar', 'released'],
-      ['', 'Spring Show', 'DebtRunner', '4 people · 4 weeks'],
-    ],
-    mHead: 'Selected work',
-    mP: 'Four AI projects and one game. Each page shows the rules, the timeline and what I changed along the way.',
-    open: 'Read more',
-    hHead: 'Highlights',
-    hP: 'Real screens from DebtRunner and AI News Radar.',
-    caps: ['DebtRunner · title screen', 'Round 1', 'Level up', 'Shop and wheel', 'AI News Radar · daily brief'],
-    pHead: 'About',
-    pLead: 'I work in two areas: AI tools and games. Claude Code and Codex write most of the code in these projects. My part is deciding what to build, writing the rules, checking what comes back, and choosing what ships.',
-    card: [
-      ['Positions', 'AI evaluation & tooling · Game production & QA'],
+    title: 'Allen Huang — AI systems and games',
+    desc: 'Allen Huang designs and tests AI systems and leads small game teams. Claude vs GPT trading, a model evaluation, a live stock model, a research tool and a Unity roguelite.',
+    chip: 'Open to AI evaluation and game production roles',
+    h1: ['I build AI systems', 'and games.'],
+    sub: 'AI evaluation and tooling, game production and QA. Below: Claude and GPT trading against each other, a model evaluation, my live stock model, a research tool, and a roguelite selected for the AAU Spring Show.',
+    cta: ['See the work', 'Email me'],
+    proof: [['5', 'projects'], ['2', 'AI models trading daily'], ['25', 'hand-scored eval cases'], ['218', 'tests in AI News Radar'], ['4 weeks', 'to a playable game']],
+    workEyebrow: 'Selected work',
+    workH: 'Five projects, four in AI and one game',
+    workP: 'Each one opens into a full write-up: the rules, the timeline and what changed along the way.',
+    read: 'Read the case study',
+    duelPacket: ['frozen packet · sha256 …', 'same bytes → both engines'],
+    duelNote: 'Format example of one decision. Real positions and results are not published.',
+    gameRole: [['Role', 'Project lead, producer, gameplay engineer'], ['Team', '4 people'], ['Engine', 'Unity 6 · URP · C#'], ['Timeline', 'Feb – Apr 2026']],
+    aboutEyebrow: 'About',
+    aboutLead: 'I’m Allen Huang. I design and test <em>AI systems</em>, and I lead small teams that make <em>games</em>.',
+    aboutSub: 'Claude Code and Codex write most of my code. I decide what to build, set the rules, check the results, and choose what ships.',
+    details: [
+      ['Focus', 'AI evaluation & tools · Game production & QA'],
       ['Languages', 'Mandarin (native) · Cantonese (native) · English (professional)'],
       ['School', 'Academy of Art University'],
       ['Tools', 'Claude Code · Codex · Python · Unity 6 · C#'],
       ['Looking for', 'AI evaluation, AI tooling, game production, game QA / Simplified Chinese LQA'],
     ],
-    cHead: 'Get in touch',
-    cP: 'Email is the fastest way to reach me.',
+    contactH: ['Let’s build', 'something.'],
+    contactP: 'The fastest way to reach me is email.',
+    copy: 'Copy',
   },
   zh: {
-    title: 'Allen Huang — AI 工具与游戏',
-    desc: 'Allen Huang 做 AI 工具和游戏：Claude 对 GPT 炒股、模型评估、实盘选股模型、研究终端，以及一款 Unity roguelite。',
-    kicker: ['作品集', '2026'],
-    role: 'AI 评估与工具 · 游戏制作与 QA',
-    intro: '我设计检验 AI 模型的实验，围绕它们做研究工具，也在实盘运行自己的量化模型。游戏方面，我带小团队做项目：DebtRunner 从第一次提交到可玩版本只用了四周，并入选 AAU 春季作品展。',
-    ribbon: [
-      ['live', '运行中', 'AI 角斗场', 'Claude 对 GPT'],
-      ['', '已完成', '模型评估', 'GPT 13–4 Claude'],
-      ['live', '实盘', 'AM 70/30', '周度选股模型'],
-      ['', 'v1.0', 'AI News Radar', '已发布'],
-      ['', '春季展', 'DebtRunner', '4 人 · 4 周'],
-    ],
-    mHead: '项目',
-    mP: '四个 AI 项目和一款游戏。每个项目页都写了规则、时间线，以及过程中我改了什么。',
-    open: '查看详情',
-    hHead: '精彩镜头',
-    hP: 'DebtRunner 和 AI News Radar 的真实画面。',
-    caps: ['DebtRunner · 标题画面', '第一回合', '升级选卡', '商店与转盘', 'AI News Radar · 每日简报'],
-    pHead: '关于我',
-    pLead: '我做两个方向：AI 工具和游戏。这些项目里的大部分代码由 Claude Code 和 Codex 编写。我负责的是：决定做什么、定规则、检查交回来的结果、决定什么能上线。',
-    card: [
-      ['位置', 'AI 评估与工具 · 游戏制作与 QA'],
+    title: 'Allen Huang — AI 系统与游戏',
+    desc: 'Allen Huang 设计和检验 AI 系统，也带小团队做游戏。Claude 对 GPT 炒股、模型评估、实盘选股模型、研究工具和一款 Unity roguelite。',
+    chip: '正在寻找 AI 评估与游戏制作方向的工作',
+    h1: ['我做 AI 系统，', '也做游戏。'],
+    sub: 'AI 评估与工具、游戏制作与 QA。下面有：Claude 和 GPT 对着炒股的实验、一次模型评估、我实盘运行的选股模型、一个研究工具，以及一款入选 AAU 春季作品展的 roguelite。',
+    cta: ['查看作品', '给我发邮件'],
+    proof: [['5', '个项目'], ['2', '个 AI 模型每天交易'], ['25', '道人工评分的评估题'], ['218', 'AI News Radar 的测试'], ['4 周', '做出可玩的游戏']],
+    workEyebrow: '精选作品',
+    workH: '四个 AI 项目，一个游戏',
+    workP: '每个项目都有完整的介绍：规则、时间线，以及过程中改了什么。',
+    read: '查看完整案例',
+    duelPacket: ['冻结数据包 · sha256 …', '同一份字节 → 两个引擎'],
+    duelNote: '一条决策的格式示例。真实持仓和结果不公开。',
+    gameRole: [['角色', '项目负责人、制作人、玩法程序'], ['团队', '4 人'], ['引擎', 'Unity 6 · URP · C#'], ['时间', '2026 年 2 月至 4 月']],
+    aboutEyebrow: '关于我',
+    aboutLead: '我是 Allen Huang。我设计和检验 <em>AI 系统</em>，也带小团队做<em>游戏</em>。',
+    aboutSub: '我的大部分代码由 Claude Code 和 Codex 编写。做什么、规则怎么定、结果对不对、什么能上线，由我决定。',
+    details: [
+      ['方向', 'AI 评估与工具 · 游戏制作与 QA'],
       ['语言', '普通话（母语）· 粤语（母语）· 英语（工作语言）'],
       ['学校', 'Academy of Art University'],
       ['工具', 'Claude Code · Codex · Python · Unity 6 · C#'],
       ['在找', 'AI 评估、AI 工具、游戏制作、游戏 QA / 简体中文 LQA 方向的工作'],
     ],
-    cHead: '联系我',
-    cP: '发邮件最快。',
+    contactH: ['一起做点', '什么吧。'],
+    contactP: '联系我最快的方式是发邮件。',
+    copy: '复制',
   },
 }[lang];
-const radar = lang === 'en' ? radarEn : radarZh;
-const shots = [title, gameplay, levelUp, shop, radar];
+
+const ai = MATCHES.filter((m) => m.track === 'ai');
+const game = getMatch('debt-runner')!;
+const evalCells = ['tie','gp','tie','gp','gp','tie','cl','gp','gp','cl','tie','tie','gp','cl','tie','gp','gp','gp','tie','tie','gp','gp','cl','gp','gp'];
+const decisions = [
+  { cls: 'claude', who: 'Claude', engine: 'claude_engine', rows: [['symbol', 'MSFT'], ['action', 'add'], ['target_weight', '0.12'], ['horizon_days', '30'], ['fact_refs', 'price:MSFT#mean_20d'], ['evidence', 'news:MSFT:2 “…”']] },
+  { cls: 'gpt', who: 'GPT', engine: 'codex_engine', rows: [['symbol', 'NVDA'], ['action', 'watch'], ['target_weight', '0'], ['horizon_days', '14'], ['fact_refs', 'income:NVDA:0#revenue'], ['evidence', 'news:NVDA:1 “…”']] },
+];
 ---
 
 <Base lang={lang} title={c.title} description={c.desc} path="">
-  <section class="masthead">
-    <div class="wrap">
-      <div class="mast-top mono"><span>{c.kicker[0]}</span><span>{c.kicker[1]}</span></div>
-      <h1 class="name">Allen <span class="v">Huang</span></h1>
-      <p class="role-line display display-zh">{c.role}</p>
-      <div class="mast-grid">
-        <p class="intro">{c.intro}</p>
-        <div class="mast-links">
-          <a class="btn" href="#work">{c.mHead} ↓</a>
-          <a class="btn ghost" href={`mailto:${CONTACT.email}`}>{UI.email[lang]}</a>
-          <a class="btn ghost" href={CONTACT.linkedin} target="_blank" rel="noreferrer">LinkedIn ↗</a>
+  <section class="hero" id="top">
+    <div class="wrap hero-copy">
+      <span class="status-chip reveal"><i aria-hidden="true"></i>{c.chip}</span>
+      <h1 class="reveal"><span class="grad">{c.h1[0]}</span><br /><span class="grad-accent">{c.h1[1]}</span></h1>
+      <p class="hero-sub reveal">{c.sub}</p>
+      <div class="hero-cta reveal">
+        <a class="btn btn-primary" href="#work">{c.cta[0]} <span class="arr" aria-hidden="true">↓</span></a>
+        <a class="btn btn-ghost" href={`mailto:${CONTACT.email}`}>{c.cta[1]}</a>
+      </div>
+    </div>
+    <div class="wrap stage-wrap" aria-hidden="true">
+      <div class="stage-3d" id="stage">
+        <div class="shot-card s-radar">
+          <div class="bar"><i></i><i></i><i></i><span>AI News Radar · 127.0.0.1:8765</span></div>
+          <div class="body"><Image src={radar} alt="" widths={[800, 1300]} sizes="(max-width: 760px) 92vw, 860px" loading="eager" /></div>
+        </div>
+        <div class="shot-card s-eval">
+          <div class="t"><span>GPT vs Claude · 25</span><span>FINAL</span></div>
+          <div class="g">{evalCells.map((k) => <i class={k} />)}</div>
+          <div class="score">13 : 4<small>8 draws</small></div>
+        </div>
+        <div class="shot-card s-game">
+          <div class="body"><Image src={gameplay} alt="" widths={[500, 800]} sizes="(max-width: 760px) 52vw, 400px" loading="eager" /></div>
         </div>
       </div>
     </div>
   </section>
 
-  <div class="ribbon" aria-label={lang === 'en' ? 'Scores' : '比分'}>
-    <div class="ribbon-track">
-      {[0, 1].map((n) => (
-        <div class="ribbon-set" aria-hidden={n === 1 ? 'true' : undefined}>
-          {c.ribbon.map(([cls, st, txt, note]) => (
-            <span><b class:list={{ 'r-live': cls === 'live' }}>{st}</b>&nbsp;&nbsp;<Fragment set:html={txt} />&nbsp;&nbsp;<i>{note}</i></span>
-          ))}
-        </div>
-      ))}
-    </div>
-  </div>
-
-  <section class="section" id="work">
+  <section class="proof" aria-label={lang === 'en' ? 'At a glance' : '概览'}>
     <div class="wrap">
-      <div class="sec-head">
-        <h2 class="display display-zh">{c.mHead}</h2>
-        <p>{c.mP}</p>
+      {c.proof.map(([v, l]) => <div><strong>{v}</strong><span>{l}</span></div>)}
+    </div>
+  </section>
+
+  <section class="section" id="work" style="padding-bottom: 0">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="eyebrow">{c.workEyebrow}</span>
+        <h2 class="grad">{c.workH}</h2>
+        <p>{c.workP}</p>
       </div>
-      <div class="fixtures">
-        {MATCHES.map((m) => (
-          <a class="fixture" href={href(lang, `${m.slug}/`)}>
-            <div class="fx-top">
-              <span class={`status ${m.status}`}>{m.statusLabel[lang]}</span>
-              <span class="mono">{m.dates[lang]}</span>
-            </div>
-            <div class="fx-main">
-              <div>
-                <h3 class="fx-title display display-zh">{m.title[lang]}</h3>
-                <p class="fx-cat">{m.category[lang]}</p>
+    </div>
+
+    {ai.map((m, i) => (
+      <article class:list={['chapter', { flip: i % 2 === 1 }]} id={`ch-${m.slug}`} data-chapter>
+        <div class="wrap chapter-grid">
+          <div class="chapter-text reveal">
+            <div class="ch-index"><b>0{i + 1}</b><span>{m.dates[lang]}</span>{m.status === 'live' && <span class="live">{m.statusLabel[lang]}</span>}</div>
+            <h3>{m.title[lang]}</h3>
+            <p class="ch-cat">{m.category[lang]}</p>
+            <p class="ch-desc">{m.line[lang]}</p>
+            <div class="facts">{m.facts.map((f) => <div><strong>{f.value[lang]}</strong><span>{f.label[lang]}</span></div>)}</div>
+            <a class="ch-link" href={href(lang, `${m.slug}/`)}>{c.read} <span class="arr" aria-hidden="true">→</span></a>
+          </div>
+          <div class="ch-visual reveal">
+            <div class="glow" aria-hidden="true"></div>
+            {m.slug === 'ai-portfolio-arena' && (
+              <div class="duel">
+                <div class="duel-packet"><span>{c.duelPacket[0]}</span><span>{c.duelPacket[1]}</span></div>
+                {decisions.map((d) => (
+                  <div class={`decision ${d.cls}`}>
+                    <header><b>{d.who}</b><span>{d.engine}</span></header>
+                    <dl>{d.rows.map(([k, v]) => <><dt>{k}</dt><dd>{v}</dd></>)}</dl>
+                    <div class="pass"><span>validate()</span><span>✓ passed</span></div>
+                  </div>
+                ))}
+                <p class="duel-note">{c.duelNote}</p>
               </div>
-              <span class:list={['tile', { live: m.status === 'live' }]}><strong>{m.score.value[lang]}</strong><span>{m.score.label[lang]}</span></span>
-            </div>
-            <div class="fx-bottom">
-              <p>{m.line[lang]}</p>
-              <span class="fx-go">{c.open} →</span>
-            </div>
-          </a>
-        ))}
+            )}
+            {m.slug === 'ai-evaluation' && <div class="paper paper-card"><EvalTally lang={lang} compact /></div>}
+            {m.slug === 'am-7030' && <div class="paper paper-card"><AmFormation lang={lang} /></div>}
+            {m.slug === 'ai-news-radar' && (
+              <div class="frame">
+                <div class="frame-bar"><i></i><i></i><i></i><span>127.0.0.1:8765</span></div>
+                <Image src={radar} alt={lang === 'en' ? 'AI News Radar daily brief' : 'AI News Radar 每日简报'} widths={[700, 1100]} sizes="(max-width: 900px) 92vw, 660px" />
+              </div>
+            )}
+          </div>
+        </div>
+      </article>
+    ))}
+
+    <article class="chapter game" id={`ch-${game.slug}`} data-chapter>
+      <div class="wrap game-grid">
+        <div class="game-head">
+          <div class="reveal">
+            <div class="ch-index"><b>05</b><span>{game.dates[lang]}</span><span>{game.statusLabel[lang]}</span></div>
+            <h3>{game.title[lang]}</h3>
+            <p class="ch-cat">{game.category[lang]}</p>
+            <p class="ch-desc" style="color: #e3cfc9">{game.line[lang]}</p>
+          </div>
+          <div class="reveal">
+            <dl class="credits">{c.gameRole.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
+            <div class="facts" style="border-top-color: rgba(255,200,190,0.16)">{game.facts.map((f) => <div><strong>{f.value[lang]}</strong><span style="color:#c99a92">{f.label[lang]}</span></div>)}</div>
+            <a class="ch-link" href={href(lang, `${game.slug}/`)}>{c.read} <span class="arr" aria-hidden="true">→</span></a>
+          </div>
+        </div>
+        <div class="game-shots reveal">
+          <figure><Image src={title} alt={lang === 'en' ? 'DebtRunner title screen' : 'DebtRunner 标题画面'} widths={[900, 1400]} sizes="(max-width: 860px) 94vw, 780px" /></figure>
+          <figure><Image src={gameplay} alt={lang === 'en' ? 'Gameplay, round 1' : '游戏画面，第一回合'} widths={[500, 800]} sizes="(max-width: 860px) 46vw, 390px" /></figure>
+          <figure><Image src={levelUp} alt={lang === 'en' ? 'Level-up card choice' : '升级选卡'} widths={[500, 800]} sizes="(max-width: 860px) 46vw, 390px" /></figure>
+        </div>
       </div>
-    </div>
+    </article>
   </section>
 
-  <section class="section" style="padding-top: 0">
-    <div class="wrap">
-      <div class="sec-head">
-        <h2 class="display display-zh">{c.hHead}</h2>
-        <p>{c.hP}</p>
-      </div>
-      <div class="highlights">
-        {shots.map((img, i) => (
-          <figure>
-            <Image src={img} alt={c.caps[i]} widths={i === 0 ? [800, 1200] : [400, 700]} sizes={i === 0 ? '(max-width: 760px) 94vw, 620px' : '(max-width: 760px) 46vw, 300px'} />
-            <figcaption>{c.caps[i]}</figcaption>
-          </figure>
-        ))}
-      </div>
-    </div>
-  </section>
+  <nav class="rail" id="rail" aria-label={lang === 'en' ? 'Projects' : '项目'}>
+    {[...ai, game].map((m) => <a href={`#ch-${m.slug}`} data-target={`ch-${m.slug}`}><span>{m.title[lang]}</span><i></i></a>)}
+  </nav>
 
-  <section class="section" id="player" style="padding-top: 0">
-    <div class="wrap player">
-      <div>
-        <h2 class="display display-zh">{c.pHead}</h2>
-        <p class="player-lead">{c.pLead}</p>
+  <section class="section" id="about">
+    <div class="wrap about">
+      <div class="reveal">
+        <span class="eyebrow">{c.aboutEyebrow}</span>
+        <p class="about-lead" style="margin-top: 16px" set:html={c.aboutLead} />
+        <p class="about-sub">{c.aboutSub}</p>
       </div>
-      <div class="card-stats">
-        <div class="cs-head mono"><span>Allen Huang</span><span>#2026</span></div>
-        <dl>
-          {c.card.map(([k, v]) => <div class="row"><dt>{k}</dt><dd>{v}</dd></div>)}
-        </dl>
-      </div>
+      <dl class="details reveal">{c.details.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
     </div>
   </section>
 
   <section class="section contact" id="contact">
     <div class="wrap">
-      <div>
-        <h2 class="display display-zh">{c.cHead}</h2>
-        <p>{c.cP}</p>
-      </div>
-      <div class="contact-list">
-        <a href={`mailto:${CONTACT.email}`}><span>{UI.email[lang]}</span><b>{CONTACT.email}</b></a>
-        <a href={CONTACT.linkedin} target="_blank" rel="noreferrer"><span>LinkedIn</span><b>yilun-huang ↗</b></a>
-        <a href={CONTACT.github} target="_blank" rel="noreferrer"><span>GitHub</span><b>SeikiChan ↗</b></a>
-      </div>
+      <h2 class="grad reveal">{c.contactH[0]}<br />{c.contactH[1]}</h2>
+      <p class="reveal">{c.contactP}</p>
+      <div class="mail reveal"><span id="mail-text">{CONTACT.email}</span><button type="button" id="copy-mail" data-done={lang === 'en' ? 'Copied' : '已复制'}>{c.copy}</button></div>
+      <div class="contact-links"><a href={CONTACT.linkedin} target="_blank" rel="noreferrer">LinkedIn ↗</a><a href={CONTACT.github} target="_blank" rel="noreferrer">GitHub ↗</a></div>
     </div>
   </section>
 </Base>
+
+<script>
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const stage = document.getElementById('stage');
+  if (stage && !reduce) {
+    let tx = 0, ty = 0, sp = 0, raf = 0;
+    const apply = () => {
+      raf = 0;
+      const rx = 18 * (1 - sp) + ty * -4;
+      stage.style.setProperty('--rx', `${rx.toFixed(2)}deg`);
+      stage.style.setProperty('--ry', `${(tx * 5).toFixed(2)}deg`);
+    };
+    const queue = () => { if (!raf) raf = requestAnimationFrame(apply); };
+    window.addEventListener('pointermove', (e) => { tx = e.clientX / innerWidth - 0.5; ty = e.clientY / innerHeight - 0.5; queue(); }, { passive: true });
+    window.addEventListener('scroll', () => { sp = Math.min(1, scrollY / (innerHeight * 0.9)); queue(); }, { passive: true });
+  }
+
+  const rail = document.getElementById('rail');
+  const links = rail ? [...rail.querySelectorAll('a')] : [];
+  const chapters = [...document.querySelectorAll('[data-chapter]')];
+  const seen = new Set<string>();
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => { if (e.isIntersecting) seen.add(e.target.id); else seen.delete(e.target.id); });
+    const current = chapters.find((ch) => seen.has(ch.id));
+    rail?.classList.toggle('on', !!current);
+    links.forEach((a) => a.classList.toggle('active', a.dataset.target === current?.id));
+  }, { rootMargin: '-45% 0px -45% 0px' });
+  chapters.forEach((ch) => io.observe(ch));
+
+  const btn = document.getElementById('copy-mail');
+  btn?.addEventListener('click', async () => {
+    const text = document.getElementById('mail-text')?.textContent ?? '';
+    try { await navigator.clipboard.writeText(text); btn.textContent = btn.dataset.done ?? 'Copied'; }
+    catch { const r = document.createRange(); const n = document.getElementById('mail-text'); if (n) { r.selectNodeContents(n); const s = getSelection(); s?.removeAllRanges(); s?.addRange(r); } }
+  });
+</script>
