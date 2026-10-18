@@ -40,7 +40,8 @@ function initGlide() {
     const a = (e.target as Element).closest?.('a[href]') as HTMLAnchorElement | null;
     if (!a || a.target) return;
     const url = new URL(a.href, location.href);
-    if (url.origin !== location.origin || url.pathname !== location.pathname || url.search !== location.search) return;
+    const norm = (path: string) => path.replace(/index\.html$/, '');
+    if (url.origin !== location.origin || norm(url.pathname) !== norm(location.pathname) || url.search !== location.search) return;
     const id = decodeURIComponent(url.hash.slice(1));
     const el = id ? document.getElementById(id) : null;
     if (id && !el) return;
