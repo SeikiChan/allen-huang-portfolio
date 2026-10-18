@@ -25,6 +25,7 @@ Every page exists in both languages; the Chinese version lives under `/zh/`.
 - **Figures and diagrams:** `src/components/figures/`.
 - **Images:** `src/assets/`. Astro resizes them and converts them to WebP at build time.
 - **Styles:** `src/styles/global.css`.
+- **Typesetting:** `src/integrations/no-orphans.mjs` runs after every build and joins the last four Chinese characters (word joiners) or the last two English words (no-break space) of each text block, so no line ends with a lone character or word.
 
 ### Media still to supply
 

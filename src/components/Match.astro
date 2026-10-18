@@ -35,7 +35,7 @@ const onPaper = new Set<FigureId>(['eval-tally', 'eval-box', 'eval-case', 'arena
       </div>
       <dl class="p-meta">
         <div><dt>{UI.role[lang]}</dt><dd>{m.role[lang]}</dd></div>
-        <div><dt>{UI.built[lang]}</dt><dd>{m.stack}</dd></div>
+        <div><dt>{UI.built[lang]}</dt><dd>{m.stack.split(' · ').map((t, i, a) => <span class="nw">{t}{i < a.length - 1 ? ' ·' : ''}</span>).reduce((acc: any[], el, i) => (i ? [...acc, ' ', el] : [el]), [])}</dd></div>
         <div><dt>{lang === 'en' ? 'Status' : '状态'}</dt><dd>{m.statusLabel[lang]}</dd></div>
         <div><dt>{UI.links[lang]}</dt><dd>{m.links.length ? m.links.map((l) => <a href={l.url} target="_blank" rel="noreferrer">{l.label[lang]} ↗</a>) : UI.privateRepo[lang]}</dd></div>
       </dl>

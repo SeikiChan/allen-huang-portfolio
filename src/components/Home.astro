@@ -1,7 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
-import EvalTally from './figures/EvalTally.astro';
+import EvalBox from './figures/EvalBox.astro';
 import AmFormation from './figures/AmFormation.astro';
 import { CONTACT, href, type Lang } from '../i18n';
 import { MATCHES, getMatch } from '../data/projects';
@@ -30,6 +30,7 @@ const c = {
     read: 'Read the case study',
     duelPacket: ['frozen packet · sha256 …', 'same bytes → both engines'],
     duelNote: 'Format example of one decision. Real positions and results are not published.',
+    qcard: { kicker: 'Model evaluation · 1 of 25', prompt: 'Rewrite a complaint as a bug report with 4 required fields.', gpt: 'All 4 fields', claude: 'Missed “Actual”', foot: 'GPT 13 · Claude 4 · 8 draws' },
     gameRole: [['Role', 'Project lead, producer, gameplay engineer'], ['Team', '4 people'], ['Engine', 'Unity 6 · URP · C#'], ['Timeline', 'Feb – Apr 2026']],
     aboutEyebrow: 'About',
     aboutLead: 'I’m Allen Huang. I design and test <em>AI systems</em>, and I lead small teams that make <em>games</em>.',
@@ -59,6 +60,7 @@ const c = {
     read: '查看完整案例',
     duelPacket: ['冻结数据包 · sha256 …', '同一份字节 → 两个引擎'],
     duelNote: '一条决策的格式示例。真实持仓和结果不公开。',
+    qcard: { kicker: '模型评估 · 25 题之一', prompt: '把一句抱怨改写成缺陷报告，必须有 4 个字段。', gpt: '4 个字段齐全', claude: '漏了 Actual 字段', foot: 'GPT 13 胜 · Claude 4 胜 · 8 平' },
     gameRole: [['角色', '项目负责人、制作人、玩法程序'], ['团队', '4 人'], ['引擎', 'Unity 6 · URP · C#'], ['时间', '2026 年 2 月至 4 月']],
     aboutEyebrow: '关于我',
     aboutLead: '我是 Allen Huang。我设计和检验 <em>AI 系统</em>，也带小团队做<em>游戏</em>。',
@@ -78,7 +80,6 @@ const c = {
 
 const ai = MATCHES.filter((m) => m.track === 'ai');
 const game = getMatch('debt-runner')!;
-const evalCells = ['tie','gp','tie','gp','gp','tie','cl','gp','gp','cl','tie','tie','gp','cl','tie','gp','gp','gp','tie','tie','gp','gp','cl','gp','gp'];
 const decisions = [
   { cls: 'claude', who: 'Claude', engine: 'claude_engine', rows: [['symbol', 'MSFT'], ['action', 'add'], ['target_weight', '0.12'], ['horizon_days', '30'], ['fact_refs', 'price:MSFT#mean_20d'], ['evidence', 'news:MSFT:2 “…”']] },
   { cls: 'gpt', who: 'GPT', engine: 'codex_engine', rows: [['symbol', 'NVDA'], ['action', 'watch'], ['target_weight', '0'], ['horizon_days', '14'], ['fact_refs', 'income:NVDA:0#revenue'], ['evidence', 'news:NVDA:1 “…”']] },
@@ -103,9 +104,11 @@ const decisions = [
           <div class="body"><Image src={radar} alt="" widths={[800, 1300]} sizes="(max-width: 760px) 92vw, 860px" loading="eager" /></div>
         </div>
         <div class="shot-card s-eval">
-          <div class="t"><span>GPT vs Claude · 25</span><span>FINAL</span></div>
-          <div class="g">{evalCells.map((k) => <i class={k} />)}</div>
-          <div class="score">13 : 4<small>8 draws</small></div>
+          <div class="q-head"><span>{c.qcard.kicker}</span><span class="q-id">IF-04</span></div>
+          <p class="q-prompt">{c.qcard.prompt}</p>
+          <div class="q-row win"><b>GPT</b><span>{c.qcard.gpt}</span><em>5</em></div>
+          <div class="q-row"><b>Claude</b><span>{c.qcard.claude}</span><em>3</em></div>
+          <div class="q-foot"><span>{c.qcard.foot}</span><strong>13 : 4</strong></div>
         </div>
         <div class="shot-card s-game">
           <div class="body"><Image src={gameplay} alt="" widths={[500, 800]} sizes="(max-width: 760px) 52vw, 400px" loading="eager" /></div>
@@ -133,7 +136,7 @@ const decisions = [
       <article class:list={['chapter', { flip: i % 2 === 1 }]} id={`ch-${m.slug}`} data-chapter>
         <div class="wrap chapter-grid">
           <div class="chapter-text reveal">
-            <div class="ch-index"><b>0{i + 1}</b><span>{m.dates[lang]}</span>{m.status === 'live' && <span class="live">{m.statusLabel[lang]}</span>}</div>
+            <div class="ch-index"><span class="ch-num">0{i + 1}</span><span>{m.dates[lang]}</span>{m.status === 'live' && <span class="live">{m.statusLabel[lang]}</span>}</div>
             <h3>{m.title[lang]}</h3>
             <p class="ch-cat">{m.category[lang]}</p>
             <p class="ch-desc">{m.line[lang]}</p>
@@ -155,7 +158,7 @@ const decisions = [
                 <p class="duel-note">{c.duelNote}</p>
               </div>
             )}
-            {m.slug === 'ai-evaluation' && <div class="paper paper-card"><EvalTally lang={lang} compact /></div>}
+            {m.slug === 'ai-evaluation' && <div class="paper paper-card"><EvalBox lang={lang} /></div>}
             {m.slug === 'am-7030' && <div class="paper paper-card"><AmFormation lang={lang} /></div>}
             {m.slug === 'ai-news-radar' && (
               <div class="frame">
@@ -172,7 +175,7 @@ const decisions = [
       <div class="wrap game-grid">
         <div class="game-head">
           <div class="reveal">
-            <div class="ch-index"><b>05</b><span>{game.dates[lang]}</span><span>{game.statusLabel[lang]}</span></div>
+            <div class="ch-index"><span class="ch-num">05</span><span>{game.dates[lang]}</span><span class="badge">{game.statusLabel[lang]}</span></div>
             <h3>{game.title[lang]}</h3>
             <p class="ch-cat">{game.category[lang]}</p>
             <p class="ch-desc" style="color: #e3cfc9">{game.line[lang]}</p>
