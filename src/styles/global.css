@@ -88,11 +88,30 @@ code { font-family: var(--mono); font-size: 0.86em; background: rgba(125, 149, 2
 .nav-links a:hover { color: var(--text); background: rgba(255, 255, 255, 0.06); }
 .nav-links a.on { color: var(--text); background: rgba(125, 149, 255, 0.16); }
 .nav-links .lang { color: var(--text); border: 1px solid var(--line-2); font-size: 13px; font-weight: 500; margin-left: 6px; }
-.progress { position: fixed; inset: 0 0 auto; height: 2px; z-index: 41; pointer-events: none; opacity: 0; transition: opacity 0.3s; }
+/* Reading progress on the top edge. One checkpoint per section: passing it fills the dot with a spring pop
+   and briefly names the section, like a checkpoint in a game. */
+.progress { --p: 0; position: fixed; inset: 0 0 auto; height: 10px; z-index: 41; pointer-events: none; opacity: 0; transition: opacity 0.3s; }
 .progress.on { opacity: 1; }
-.progress i { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(var(--p, 0)); }
+.progress::before { content: ''; position: absolute; inset: 3px 0 auto; height: 2px; background: rgba(226, 236, 229, 0.08); }
+.progress .fill { position: absolute; inset: 3px 0 auto; height: 2px; background: var(--accent); transform-origin: left; transform: scaleX(var(--p)); }
+.progress .head { position: absolute; top: 4px; left: calc(var(--p) * 100%); width: 4px; height: 4px; margin: -2px 0 0 -2px; border-radius: 50%; background: #dfe5ff; box-shadow: 0 0 6px 2px rgba(125, 149, 255, 0.75), 0 0 16px 4px rgba(125, 149, 255, 0.3); }
+.cp { position: absolute; top: 4px; width: 7px; height: 7px; margin: -3.5px 0 0 -3.5px; border-radius: 50%; background: var(--bg); box-shadow: inset 0 0 0 1.5px rgba(226, 236, 229, 0.35); transition: box-shadow 0.2s; }
+.cp.done { background: var(--accent); box-shadow: 0 0 0 3px rgba(125, 149, 255, 0.18); }
+/* Motion Prompt #001 · MIT License (c) 2026 Shohei Ohtaki · https://showheyohtaki.github.io/motion-prompt/#001
+   Pop-in spring 1 − e^(−6.5t)·cos(15t) over 0.8 s, peak ≈ 1.27, sampled into linear(). */
+.cp.pop { animation: cp-pop 0.8s linear(0, 0.471, 0.963, 1.237, 1.27, 1.162, 1.03, 0.947, 0.929, 0.952, 0.987, 1.011, 1.018, 1.014, 1.005, 0.998, 1); }
+@keyframes cp-pop { from { transform: scale(0); } to { transform: scale(1); } }
+.cp-tip { position: absolute; top: 14px; left: 0; padding: 4px 10px; border-radius: 999px; background: #111915; border: 1px solid var(--line-2); color: var(--text); font-size: 12px; font-weight: 500; white-space: nowrap; opacity: 0; transform-origin: top center; translate: -50% 0; }
+.cp-tip.show { animation: tip-in 1.9s both; }
+/* Motion Prompt #001 badge spring 1 − e^(−7t)·cos(17t) over 0.7 s, then a hold and a 0.3 s fade. */
+@keyframes tip-in {
+  0% { opacity: 0; transform: scale(0.4); animation-timing-function: linear(0, 0.458, 0.955, 1.245, 1.29, 1.181, 1.039, 0.944, 0.918, 0.942, 0.981, 1.011, 1.022, 1.018, 1.008, 0.998, 1); }
+  37% { opacity: 1; transform: scale(1); }
+  84% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1); }
+}
 @media (max-width: 600px) { .nav-links .opt { display: none; } .nav-inner { padding-left: 14px; } }
-@media (prefers-reduced-motion: reduce) { .nav, .nav.away { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .nav, .nav.away { transition: none; } .cp.pop { animation: none; } .cp-tip.show { animation: none; } }
 
 /* Anchor targets clear the floating nav; sections and chapters carry their own top padding. */
 [id] { scroll-margin-top: 84px; }
@@ -299,14 +318,14 @@ code { font-family: var(--mono); font-size: 0.86em; background: rgba(125, 149, 2
 @media (max-width: 480px) { .vs { gap: 10px; padding: 12px; } .vs .mid { padding: 0 10px; } .p-meta { grid-template-columns: 1fr; } }
 
 .block { padding: clamp(64px, 8vw, 104px) 0; border-top: 1px solid var(--line); }
-.block-head { display: grid; grid-template-columns: minmax(0, 240px) minmax(0, 1fr); gap: 12px clamp(24px, 5vw, 64px); }
-.block-head .tag { font-size: 14px; font-weight: 500; color: var(--accent); padding-top: 14px; }
+/* One left edge for tag, heading, text and the figure below, so every block lines up with its figure. */
+.block-head { max-width: 860px; }
+.block-head .tag { font-size: 14px; font-weight: 500; color: var(--accent); margin-bottom: 14px; }
 .block h2 { font-size: clamp(1.9rem, 4vw, 3rem); line-height: 1.08; }
 .prose { display: grid; gap: 1em; max-width: 42em; margin-top: 18px; color: var(--text-2); font-size: 1.04rem; }
 .prose a { color: var(--accent); }
 .block-body { min-width: 0; }
 .block-wide { margin-top: clamp(28px, 4vw, 44px); }
-@media (max-width: 860px) { .block-head { grid-template-columns: 1fr; } }
 
 .rules { display: grid; grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr)); gap: 12px; margin-top: clamp(28px, 4vw, 44px); }
 @media (max-width: 900px) { .rules { grid-template-columns: repeat(2, minmax(0, 1fr)); } }

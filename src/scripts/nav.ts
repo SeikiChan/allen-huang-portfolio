@@ -76,6 +76,8 @@ function landAtTop() {
 // Sticky header: once the page moves, a shadow under the header fades in over the next 24 px of scroll.
 // Motion Prompt #079 · MIT License (c) 2026 Shohei Ohtaki · https://showheyohtaki.github.io/motion-prompt/#079
 // Scroll progress bar: a thin line on the top edge, fill = scroll fraction of the page.
+// Motion Prompt #068 · MIT License (c) 2026 Shohei Ohtaki · https://showheyohtaki.github.io/motion-prompt/#068
+// Step indicator: as the line reaches a step, that step turns done. Here every section is a step on the line.
 // The nav itself follows the hide-on-scroll-down, show-on-scroll-up pattern of long-form reading sites.
 function initHeadroom() {
   const nav = document.getElementById('nav');
@@ -85,6 +87,43 @@ function initHeadroom() {
   const links = [...nav.querySelectorAll<HTMLAnchorElement>('a[data-sec]')];
   const TOP = 140; // above this the nav always shows
   let away = false, lastY = scrollY, run = 0, raf = 0;
+
+  // Checkpoints: one per [data-cp] section, placed where that section reaches the 35% line used below.
+  const tip = document.getElementById('cp-tip');
+  let cps: { at: number; label: string; el: HTMLElement; done: boolean }[] = [];
+  let tipTimer = 0;
+  const layout = () => {
+    if (!bar) return;
+    bar.querySelectorAll('.cp').forEach((n) => n.remove());
+    const max = document.documentElement.scrollHeight - innerHeight;
+    const out: typeof cps = [];
+    let lastX = -1;
+    for (const sec of document.querySelectorAll<HTMLElement>('main [data-cp]')) {
+      const at = (sec.getBoundingClientRect().top + scrollY - innerHeight * 0.35) / max;
+      if (max <= 0 || at <= 0 || at >= 0.995 || (at - lastX) * innerWidth < 14) continue;
+      lastX = at;
+      const el = document.createElement('i');
+      el.className = 'cp';
+      el.style.left = `${(at * 100).toFixed(3)}%`;
+      // Already passed (reload, resize, back): mark done without replaying the pop.
+      const done = scrollY / max >= at;
+      el.classList.toggle('done', done);
+      bar.append(el);
+      out.push({ at, label: sec.dataset.cp ?? '', el, done });
+    }
+    cps = out;
+  };
+  const showTip = (c: (typeof cps)[number]) => {
+    if (!tip || reduce.matches) return;
+    tip.textContent = c.label;
+    const half = tip.offsetWidth / 2 + 12;
+    tip.style.left = `${clamp(c.at * innerWidth, half, innerWidth - half)}px`;
+    tip.classList.remove('show');
+    void tip.offsetWidth;
+    tip.classList.add('show');
+    clearTimeout(tipTimer);
+    tipTimer = window.setTimeout(() => tip.classList.remove('show'), 2000);
+  };
 
   const set = (hide: boolean) => {
     if (hide === away) return;
@@ -107,8 +146,20 @@ function initHeadroom() {
     nav.style.setProperty('--sh', clamp(y / 24).toFixed(3));
     const max = document.documentElement.scrollHeight - innerHeight;
     if (bar) {
-      bar.style.setProperty('--p', max > 0 ? clamp(y / max).toFixed(4) : '0');
+      const p = max > 0 ? clamp(y / max) : 0;
+      bar.style.setProperty('--p', p.toFixed(4));
       bar.classList.toggle('on', y >= TOP);
+      let passed: (typeof cps)[number] | undefined;
+      for (const c of cps) {
+        const done = p >= c.at;
+        if (done === c.done) continue;
+        c.done = done;
+        c.el.classList.toggle('done', done);
+        c.el.classList.toggle('pop', done);
+        if (done && dy > 0) passed = c;
+      }
+      // Only name the section when reading forward past it; a long jump names the last one passed.
+      if (passed && y >= TOP) showTip(passed);
     }
 
     // Mark the section the reader is in: the last marked block whose top has passed 35% of the viewport.
@@ -121,7 +172,11 @@ function initHeadroom() {
 
   nav.addEventListener('focusin', () => set(false));
   addEventListener('scroll', queue, { passive: true });
-  addEventListener('resize', queue, { passive: true });
+  addEventListener('resize', () => { layout(); queue(); }, { passive: true });
+  // Sections move as images and fonts load; place the checkpoints again once the page has settled.
+  addEventListener('load', () => { layout(); queue(); });
+  document.fonts?.ready.then(() => { layout(); queue(); });
+  layout();
   update();
 }
 

@@ -45,7 +45,7 @@ const onPaper = new Set<FigureId>(['eval-tally', 'eval-box', 'eval-case', 'arena
   {m.blocks.map((b) => {
     const fig = b.kind === 'figure' ? b.figure : b.kind === 'text' ? b.figure : undefined;
     return (
-      <section class="block" data-sec="work">
+      <section class="block" data-sec="work" data-cp={b.tag[lang]}>
         <div class="wrap">
           <div class="block-head reveal">
             <p class="tag">{b.tag[lang]}</p>

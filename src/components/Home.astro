@@ -133,7 +133,7 @@ const decisions = [
     </div>
 
     {ai.map((m, i) => (
-      <article class:list={['chapter', { flip: i % 2 === 1 }]} id={`ch-${m.slug}`} data-chapter data-sec="work">
+      <article class:list={['chapter', { flip: i % 2 === 1 }]} id={`ch-${m.slug}`} data-chapter data-sec="work" data-cp={m.title[lang]}>
         <div class="wrap chapter-grid">
           <div class="chapter-text reveal">
             <div class="ch-index"><span class="ch-num">0{i + 1}</span><span>{m.dates[lang]}</span>{m.status === 'live' && <span class="live">{m.statusLabel[lang]}</span>}</div>
@@ -171,7 +171,7 @@ const decisions = [
       </article>
     ))}
 
-    <article class="chapter game" id={`ch-${game.slug}`} data-chapter data-sec="work">
+    <article class="chapter game" id={`ch-${game.slug}`} data-chapter data-sec="work" data-cp={game.title[lang]}>
       <div class="wrap game-grid">
         <div class="game-head">
           <div class="reveal">
@@ -199,7 +199,7 @@ const decisions = [
     {[...ai, game].map((m) => <a href={`#ch-${m.slug}`} data-target={`ch-${m.slug}`}><span>{m.title[lang]}</span><i></i></a>)}
   </nav>
 
-  <section class="section" id="about" data-sec="about">
+  <section class="section" id="about" data-sec="about" data-cp={UI.navPlayer[lang]}>
     <div class="wrap about">
       <div class="reveal">
         <span class="eyebrow">{c.aboutEyebrow}</span>
@@ -210,7 +210,7 @@ const decisions = [
     </div>
   </section>
 
-  <section class="section contact" id="contact" data-sec="contact">
+  <section class="section contact" id="contact" data-sec="contact" data-cp={UI.navContact[lang]}>
     <div class="wrap">
       <h2 class="grad reveal">{c.contactH[0]}<br />{c.contactH[1]}</h2>
       <p class="reveal">{c.contactP}</p>
