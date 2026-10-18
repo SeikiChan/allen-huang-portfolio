@@ -78,7 +78,7 @@ code { font-family: var(--mono); font-size: 0.86em; background: rgba(125, 149, 2
 
 /* Floating nav. Reading down hides it (it slides up out of the way); any scroll up or keyboard focus brings it
    back. A 2px line on the top edge keeps the reading position without covering the text. */
-.nav { --o: cubic-bezier(0.33, 1, 0.68, 1); --sh: 0; position: fixed; top: 14px; left: 50%; z-index: 40; width: min(calc(100% - 24px), 980px); transform: translate(-50%, 0); transition: transform 0.45s var(--o), opacity 0.3s var(--o); view-transition-name: site-nav; }
+.nav { --o: cubic-bezier(0.33, 1, 0.68, 1); --sh: 0; position: fixed; top: 14px; left: 50%; z-index: 42; width: min(calc(100% - 24px), 980px); transform: translate(-50%, 0); transition: transform 0.45s var(--o), opacity 0.3s var(--o); view-transition-name: site-nav; }
 .nav.away { transform: translate(-50%, calc(-100% - 22px)); opacity: 0; transition: transform 0.4s var(--o), opacity 0.25s 0.1s; }
 .nav-inner { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 8px 8px 18px; border: 1px solid var(--line-2); border-radius: 999px; background: rgba(12, 18, 16, calc(0.72 + 0.24 * var(--sh))); backdrop-filter: blur(16px) saturate(140%); -webkit-backdrop-filter: blur(16px) saturate(140%); box-shadow: 0 12px 32px rgba(0, 0, 0, calc(0.45 * var(--sh))); }
 .brand { text-decoration: none; font-weight: 600; letter-spacing: -0.02em; display: inline-flex; align-items: center; gap: 10px; white-space: nowrap; }
@@ -103,6 +103,8 @@ code { font-family: var(--mono); font-size: 0.86em; background: rgba(125, 149, 2
 @keyframes cp-pop { from { transform: scale(0); } to { transform: scale(1); } }
 .cp-tip { position: absolute; top: 14px; left: 0; padding: 4px 10px; border-radius: 999px; background: #111915; border: 1px solid var(--line-2); color: var(--text); font-size: 12px; font-weight: 500; white-space: nowrap; opacity: 0; transform-origin: top center; translate: -50% 0; }
 .cp-tip.show { animation: tip-in 1.9s both; }
+/* The active nav link already names the current section. Keep the checkpoint label clear of the pill. */
+.nav:not(.away) + .progress .cp-tip { visibility: hidden; }
 /* Motion Prompt #001 badge spring 1 − e^(−7t)·cos(17t) over 0.7 s, then a hold and a 0.3 s fade. */
 @keyframes tip-in {
   0% { opacity: 0; transform: scale(0.4); animation-timing-function: linear(0, 0.458, 0.955, 1.245, 1.29, 1.181, 1.039, 0.944, 0.918, 0.942, 0.981, 1.011, 1.022, 1.018, 1.008, 0.998, 1); }
