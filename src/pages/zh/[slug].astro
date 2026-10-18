@@ -1,0 +1,12 @@
+---
+import Match from '../../components/Match.astro';
+import { MATCHES, type Match as M } from '../../data/projects';
+
+export function getStaticPaths() {
+  return MATCHES.map((match) => ({ params: { slug: match.slug }, props: { match } }));
+}
+
+const { match } = Astro.props as { match: M };
+---
+
+<Match lang="zh" match={match} />

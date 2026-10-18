@@ -1,0 +1,74 @@
+---
+import type { Lang } from '../../i18n';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+
+// Case IF-04, quoted from the published report. Scores: instruction following, factuality, grounding, relevance, Chinese naturalness.
+const dims = {
+  en: ['Instruction following', 'Factuality', 'Grounding', 'Relevance', 'Chinese naturalness'],
+  zh: ['指令遵循', '事实准确', '依据约束', '相关性', '中文自然度'],
+}[lang];
+const gpt = ['5', '5', '4', '5', 'N/A'];
+const claude = ['3', '5', '3', '4', '5'];
+const t = {
+  en: {
+    head: 'Case IF-04 · QA bug report',
+    prompt: 'Rewrite “After clicking Save, the page does not change, but after refreshing, the data has been saved” as a QA bug report. Include Summary, Steps, Expected, and Actual. Do not add device, browser, or version details that were not provided.',
+    expected: 'All four fields present; steps reproduce saving and refreshing; no invented device or version details.',
+    gptEv: 'All four fields and reproducible steps are present. Expected infers a save-success state that was not explicitly specified.',
+    claudeEv: 'The required Actual field is missing and Steps omit refreshing. Its expectation of a status update is reasonable but not specified.',
+    verdict: 'GPT wins — every required field and more reproducible steps.',
+    promptL: 'Prompt', expL: 'Expected behavior', evL: 'Evidence for the score', dimL: 'Dimension', verdictL: 'Pairwise',
+  },
+  zh: {
+    head: '案例 IF-04 · QA 缺陷报告',
+    prompt: '把“点击保存后页面没有变化，但刷新后数据已经保存”改写成一份 QA 缺陷报告，包含 Summary、Steps、Expected 和 Actual。不要添加没有提供的设备、浏览器或版本信息。',
+    expected: '四个字段齐全；步骤能复现“保存—刷新”；不编造设备或版本信息。',
+    gptEv: '四个字段和可复现步骤都有。Expected 推断出“应显示保存成功”，这一点题目没有明确要求。',
+    claudeEv: '缺少必填的 Actual 字段，Steps 漏掉了“刷新”。对状态提示的预期合理，但题目没有要求。',
+    verdict: 'GPT 胜：必填字段齐全，复现步骤更完整。',
+    promptL: '提示词', expL: '预期行为', evL: '评分证据', dimL: '维度', verdictL: '比较结论',
+  },
+}[lang];
+---
+
+<figure class="fig case">
+  <div class="fig-head mono"><span>{t.head}</span><span>{lang === 'en' ? 'From the report' : '摘自报告'}</span></div>
+  <div class="top">
+    <div><p class="mono label">{t.promptL}</p><p class="quote">{t.prompt}</p></div>
+    <div><p class="mono label">{t.expL}</p><p>{t.expected}</p></div>
+  </div>
+  <div class="split">
+    <div class="side"><p class="mono label who gpt">GPT · {t.evL}</p><p>{t.gptEv}</p></div>
+    <div class="side"><p class="mono label who claude">Claude · {t.evL}</p><p>{t.claudeEv}</p></div>
+  </div>
+  <div class="table-wrap">
+    <table class="data">
+      <thead><tr><th>{t.dimL}</th><th>GPT</th><th>Claude</th></tr></thead>
+      <tbody>
+        {dims.map((d, i) => (
+          <tr class:list={{ diff: gpt[i] !== claude[i] && gpt[i] !== 'N/A' }}>
+            <td>{d}</td><td class="num">{gpt[i]}</td><td class="num">{claude[i]}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+  <p class="verdict"><span class="mono">{t.verdictL}</span> {t.verdict}</p>
+</figure>
+
+<style>
+  .case { display: grid; gap: 18px; }
+  .label { color: var(--muted); margin-bottom: 6px; }
+  .top { display: grid; grid-template-columns: 1.4fr 1fr; gap: 20px; font-size: 15px; }
+  .quote { border-left: 3px solid var(--line); padding-left: 12px; color: var(--ink-2); }
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .side { background: var(--paper); border-radius: 8px; padding: 14px 16px; font-size: 15px; }
+  .who.gpt { color: var(--ink); }
+  .who.claude { color: var(--cobalt); }
+  tr.diff td { background: var(--cobalt-soft); font-weight: 600; }
+  .verdict { font-size: 15px; margin: 0; }
+  .verdict .mono { color: var(--cobalt); margin-right: 8px; }
+  @media (max-width: 700px) { .top, .split { grid-template-columns: 1fr; } }
+</style>

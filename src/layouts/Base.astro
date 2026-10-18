@@ -1,0 +1,79 @@
+---
+import '../styles/global.css';
+import { CONTACT, UI, href, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+  title: string;
+  description: string;
+  /** Path of this page without the language prefix, e.g. '' or 'debt-runner/'. Used for the language switch and hreflang. */
+  path: string;
+}
+
+const { lang, title, description, path } = Astro.props;
+const other: Lang = lang === 'en' ? 'zh' : 'en';
+const site = Astro.site;
+const abs = (l: Lang) => (site ? new URL(href(l, path), site).toString() : href(l, path));
+const families = ['Geist:wght@400;500;600;700', 'Geist+Mono:wght@400;500'];
+if (lang === 'zh') families.push('Noto+Sans+SC:wght@400;500;600;700');
+const fonts = `https://fonts.googleapis.com/css2?${families.map((f) => `family=${f}`).join('&')}&display=swap`;
+---
+
+<!doctype html>
+<html lang={UI.htmlLang[lang]}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0a0f0d" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={abs(lang)} />
+    <link rel="alternate" hreflang="en" href={abs('en')} />
+    <link rel="alternate" hreflang="zh-CN" href={abs('zh')} />
+    <link rel="alternate" hreflang="x-default" href={abs('en')} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <link rel="icon" href={`${import.meta.env.BASE_URL.replace(/\/?$/, '/')}favicon.svg`} type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href={fonts} />
+    <script is:inline>document.documentElement.classList.add('js');</script>
+  </head>
+  <body>
+    <a class="skip" href="#main">{UI.skip[lang]}</a>
+    <header class="nav" id="nav">
+      <div class="nav-inner">
+        <a class="brand" href={href(lang)} aria-label={UI.home[lang]}><i aria-hidden="true"></i>Allen Huang</a>
+        <nav class="nav-links" id="nav-links" aria-label={lang === 'en' ? 'Main' : '主导航'}>
+          <a href={`${href(lang)}#work`} data-sec="work">{UI.navWork[lang]}</a>
+          <a class="opt" href={`${href(lang)}#about`} data-sec="about">{UI.navPlayer[lang]}</a>
+          <a class="opt" href={href(lang, 'changelog/')} data-sec="log">{UI.navLog[lang]}</a>
+          <a href={`${href(lang)}#contact`} data-sec="contact">{UI.navContact[lang]}</a>
+          <a class="lang" href={href(other, path)} hreflang={UI.htmlLang[other]} lang={UI.htmlLang[other]} aria-label={UI.switchLabel[lang]}>{UI.switchTo[lang]}</a>
+        </nav>
+      </div>
+    </header>
+    <div class="progress" id="progress" aria-hidden="true"><i class="fill"></i><i class="head"></i><span class="cp-tip" id="cp-tip"></span></div>
+    <main id="main">
+      <slot />
+    </main>
+    <footer class="footer">
+      <div class="wrap">
+        <span>© 2026 Allen Huang</span>
+        <span><a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a> · <a href={CONTACT.linkedin} rel="noreferrer" target="_blank">LinkedIn</a> · <a href={CONTACT.github} rel="noreferrer" target="_blank">GitHub</a> · <a href={href(lang, 'changelog/')}>{UI.navLog[lang]}</a></span>
+      </div>
+    </footer>
+    <script>
+      import { initNav } from '../scripts/nav';
+      initNav();
+
+      // Reveal on scroll. Content is visible without this script; it only adds the entrance.
+      const io = new IntersectionObserver(
+        (entries) => entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }),
+        { rootMargin: '0px 0px -8% 0px' },
+      );
+      document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+    </script>
+  </body>
+</html>

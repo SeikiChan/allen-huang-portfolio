@@ -1,0 +1,84 @@
+---
+import type { Lang } from '../../i18n';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+
+// One trading day in ai-portfolio-arena (auto_trader.py, engines/, peer_review.py).
+const t = {
+  en: {
+    steps: [
+      { time: '10:00 ET', title: 'Freeze the packet', body: 'Prices, quotes, news, financials. One file, one SHA-256.' },
+      { time: 'Decide', title: 'Two engines, apart', body: '' },
+      { time: 'Referee', title: 'validate()', body: 'Schema, citations, limits. Fail any check and the round is void.' },
+      { time: 'Trade', title: 'Paper limit orders', body: 'Day orders to each model’s own Alpaca paper account.' },
+      { time: 'After', title: 'Post-match comments', body: 'Each model comments once on the other’s published decision.' },
+    ],
+    claude: ['Claude', 'own instructions, memory, account'],
+    gpt: ['GPT', 'same, plus a research desk that finishes before the decision'],
+    cap: 'Every round keeps the packet, the full prompt, the raw reply and the verdict.',
+  },
+  zh: {
+    steps: [
+      { time: '美东 10:00', title: '冻结数据包', body: '价格、报价、新闻、财报。一个文件，一个 SHA-256。' },
+      { time: '决策', title: '两个引擎，各做各的', body: '' },
+      { time: '裁判', title: 'validate()', body: '结构、引文、限额。任何一条不过，整轮作废。' },
+      { time: '下单', title: '模拟盘限价单', body: '当日限价单，发到各自的 Alpaca 模拟账户。' },
+      { time: '赛后', title: '互评', body: '每个模型给对方公开的决策写一条评论。' },
+    ],
+    claude: ['Claude', '自己的指令、记忆、账户'],
+    gpt: ['GPT', '同上，另有研究台，在决策前完成检索'],
+    cap: '每一轮都存档：数据包、完整提示词、原始回复、裁判结论。',
+  },
+}[lang];
+---
+
+<figure class="fig flow">
+  <ol>
+    {t.steps.map((s, i) => (
+      <li class:list={{ ref: i === 2 }}>
+        <i class="node" aria-hidden="true"></i>
+        <span class="when">{s.time}</span>
+        {i === 1 ? (
+          <div class="pair">
+            <div class="eng home"><b>{t.claude[0]}</b><span>{t.claude[1]}</span></div>
+            <div class="eng away"><b>{t.gpt[0]}</b><span>{t.gpt[1]}</span></div>
+          </div>
+        ) : (
+          <div class:list={['txt', { card: i === 2 }]}><b class:list={{ code: i === 2 }}>{s.title}</b><span>{s.body}</span></div>
+        )}
+      </li>
+    ))}
+  </ol>
+  <figcaption>{t.cap}</figcaption>
+</figure>
+
+<style>
+  /* One continuous track runs through a node per step and ends in an arrowhead: the order reads at a glance
+     and nothing is drawn by a text glyph. Vertical below 900px. */
+  ol { --track: 1.5px; --node: 11px; list-style: none; margin: 0; padding: 0; position: relative; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 28px 24px; }
+  ol::before { content: ''; position: absolute; left: 0; right: 1px; top: calc(var(--node) / 2 - var(--track) / 2); height: var(--track); background: var(--ink); }
+  ol::after { content: ''; position: absolute; right: 1px; top: calc(var(--node) / 2 - 4.5px); width: 9px; height: 9px; box-sizing: border-box; border-top: var(--track) solid var(--ink); border-right: var(--track) solid var(--ink); transform: rotate(45deg); }
+  li { position: relative; display: grid; gap: 10px; align-content: start; min-width: 0; }
+  .node { display: block; width: var(--node); height: var(--node); border-radius: 50%; background: var(--card); box-shadow: inset 0 0 0 var(--track) var(--ink); position: relative; z-index: 1; margin-bottom: 8px; }
+  li.ref .node { background: var(--ink); }
+  .when { font-size: 13px; font-weight: 500; color: var(--away); }
+  b { display: block; font-size: 1.05rem; font-weight: 600; line-height: 1.3; margin-bottom: 6px; }
+  b.code { font-family: var(--mono); font-size: 1rem; }
+  .txt span, .eng span { display: block; font-size: 14px; line-height: 1.5; color: var(--ink-2); }
+  .card { background: var(--board); color: var(--board-ink); padding: 12px 14px 14px; border-radius: 4px; }
+  .card span { color: var(--board-muted); }
+  .pair { display: grid; gap: 8px; }
+  .eng { border: 1.5px solid currentColor; border-radius: 4px; padding: 10px 12px 12px; }
+  .eng.home { color: var(--home); }
+  .eng.away { color: var(--away); }
+  .eng b { margin-bottom: 2px; }
+  .eng span { font-size: 13px; }
+  figcaption { margin-top: 28px; }
+  @media (max-width: 900px) {
+    ol { grid-template-columns: 1fr; gap: 26px; padding-left: 30px; }
+    ol::before { left: calc(var(--node) / 2 - var(--track) / 2); right: auto; top: 4px; bottom: 6px; width: var(--track); height: auto; }
+    ol::after { left: calc(var(--node) / 2 - 4.5px); right: auto; top: auto; bottom: 1px; transform: rotate(135deg); }
+    .node { position: absolute; left: -30px; top: 4px; margin: 0; }
+  }
+</style>

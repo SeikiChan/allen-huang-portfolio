@@ -1,0 +1,137 @@
+---
+import { Image } from 'astro:assets';
+import type { Lang } from '../../i18n';
+import Placeholder from '../Placeholder.astro';
+import title from '../../assets/debt-runner/title.webp';
+import gameplay from '../../assets/debt-runner/gameplay.webp';
+import levelUp from '../../assets/debt-runner/level-up.webp';
+import shop from '../../assets/debt-runner/shop.webp';
+
+interface Props { lang: Lang; view: 'title' | 'gallery' | 'loop' | 'video'; compact?: boolean }
+const { lang, view, compact = false } = Astro.props;
+
+const alt = {
+  title: { en: 'DebtRunner title screen: a neon “Welcome” sign over a red stage curtain, with Start, Setting, Credit and Exit buttons', zh: 'DebtRunner 标题画面：红色舞台幕布前的霓虹“Welcome”招牌，带开始、设置、制作人员和退出按钮' },
+  gameplay: { en: 'Gameplay: the player runs from coin monsters while a round timer and debt target show at the top', zh: '游戏画面：玩家躲避金币怪物，顶部显示回合计时和债务目标' },
+  levelUp: { en: 'Level-up screen offering three upgrade cards: Double Entry, Final Notice and Return to Sender', zh: '升级界面：三张强化卡可选，Double Entry、Final Notice 和 Return to Sender' },
+  shop: { en: 'Between-round shop with upgrades for sale and a prize wheel with cash, debt and enemy segments', zh: '回合间商店：出售强化道具，旁边是带现金、加债、加怪等格子的转盘' },
+};
+const cap = {
+  gameplay: { en: 'Round 1 of 10: collect the debt before the timer ends.', zh: '第 1 / 10 回合：在倒计时结束前凑齐债务。' },
+  levelUp: { en: 'Level-up: pick one of three cards.', zh: '升级：三选一强化卡。' },
+  shop: { en: 'Shop and wheel between rounds.', zh: '回合间的商店与转盘。' },
+};
+// Game-state flow as built in GameFlowController.cs: Title → Gameplay → Settlement → Shop → next round,
+// ending in GameOver (killed, or short of the debt at round end) or Victory (boss round cleared).
+const loop = {
+  en: {
+    stages: [
+      { state: 'Title', title: 'Start a run', body: 'Story intro, then round one.' },
+      { state: 'Gameplay', title: 'Play the round', systems: ['Movement', 'Auto-target combat', 'Enemy spawning', 'Projectiles', 'XP & level-up'] },
+      { state: 'Settlement', title: 'Pay the debt', body: 'Cash earned, debt paid, the next round’s debt.' },
+      { state: 'Shop', title: 'Shop and wheel', body: 'Buy upgrades, spin the prize wheel.' },
+    ],
+    back: 'Next round',
+    ends: [
+      { state: 'Game over', body: 'Killed, or short of the debt when the round ends.' },
+      { state: 'Victory', body: 'Clear the boss round.' },
+    ],
+    cap: 'As implemented in GameFlowController. The five systems run inside every round.',
+  },
+  zh: {
+    stages: [
+      { state: '标题', title: '开始一局', body: '剧情开场，然后进入第一回合。' },
+      { state: '游戏中', title: '打一个回合', systems: ['移动', '自动瞄准战斗', '敌人生成', '投射物', '经验与升级'] },
+      { state: '结算', title: '还债', body: '本回合收入、已还债务、下回合的债务。' },
+      { state: '商店', title: '商店与转盘', body: '购买强化，转奖励转盘。' },
+    ],
+    back: '下一回合',
+    ends: [
+      { state: '游戏结束', body: '被击倒，或回合结束时钱不够还债。' },
+      { state: '胜利', body: '打赢 Boss 回合。' },
+    ],
+    cap: '依据 GameFlowController 的实现。五个系统在每个回合里运行。',
+  },
+}[lang];
+---
+
+{view === 'title' && (compact
+  ? <Image src={title} alt={alt.title[lang]} widths={[480, 800]} sizes="(max-width: 760px) 92vw, 560px" />
+  : <figure class="fig fig-plain"><Image class="shot" src={title} alt={alt.title[lang]} widths={[800, 1200, 1600]} sizes="(max-width: 1240px) 94vw, 1200px" loading="eager" /></figure>
+)}
+
+{view === 'gallery' && (
+  <div class="gallery">
+    <figure class="wide"><Image class="shot" src={gameplay} alt={alt.gameplay[lang]} widths={[800, 1200]} sizes="(max-width: 1240px) 94vw, 1200px" /><figcaption>{cap.gameplay[lang]}</figcaption></figure>
+    <figure><Image class="shot" src={levelUp} alt={alt.levelUp[lang]} widths={[600, 900]} sizes="(max-width: 640px) 94vw, 600px" /><figcaption>{cap.levelUp[lang]}</figcaption></figure>
+    <figure><Image class="shot" src={shop} alt={alt.shop[lang]} widths={[600, 900]} sizes="(max-width: 640px) 94vw, 600px" /><figcaption>{cap.shop[lang]}</figcaption></figure>
+  </div>
+)}
+
+{view === 'loop' && (
+  <figure class="fig states">
+    <ol class="track">
+      {loop.stages.map((st) => (
+        <li>
+          <i class="node" aria-hidden="true"></i>
+          <span class="state">{st.state}</span>
+          <b>{st.title}</b>
+          {st.systems
+            ? <ul class="systems">{st.systems.map((x) => <li>{x}</li>)}</ul>
+            : <span class="body">{st.body}</span>}
+        </li>
+      ))}
+    </ol>
+    <div class="back" aria-hidden="true"><span><svg viewBox="0 0 12 12"><path d="M9.5 6.5a3.5 3.5 0 1 1-1.2-2.65M9.5 1.8v2.4H7.1" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" /></svg>{loop.back}</span></div>
+    <p class="sr">{loop.back}: {loop.stages[3].state} → {loop.stages[1].state}</p>
+    <dl class="ends">
+      {loop.ends.map((e) => <div><dt>{e.state}</dt><dd>{e.body}</dd></div>)}
+    </dl>
+    <figcaption>{loop.cap}</figcaption>
+  </figure>
+)}
+
+{view === 'video' && (
+  <Placeholder
+    lang={lang}
+    title={lang === 'en' ? 'Gameplay video, 60–90 seconds' : '游戏实机视频，60–90 秒'}
+    note={lang === 'en' ? 'One full round: combat, a level-up choice, and the shop. To be supplied.' : '一个完整回合：战斗、一次升级选择、商店。素材待提供。'}
+  />
+)}
+
+<style>
+  /* Same drawing language as the Arena flow: nodes on a track, drawn arrowheads, no text glyphs. */
+  .states { --track: 1.5px; --node: 11px; --gap: 28px; }
+  .track { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0 var(--gap); }
+  .track > li { position: relative; display: grid; gap: 8px; align-content: start; min-width: 0; }
+  .node { display: block; width: var(--node); height: var(--node); border-radius: 50%; background: var(--card); box-shadow: inset 0 0 0 var(--track) var(--ink); margin-bottom: 10px; }
+  .track > li:nth-child(2) .node { background: var(--ink); }
+  /* segment from this node to the next one, ending in an arrowhead */
+  .track > li:not(:last-child)::before { content: ''; position: absolute; top: calc(var(--node) / 2 - var(--track) / 2); left: calc(var(--node) + 6px); right: calc(-1 * var(--gap) + 7px); height: var(--track); background: var(--ink); }
+  .track > li:not(:last-child)::after { content: ''; position: absolute; top: calc(var(--node) / 2 - 3.5px); right: calc(-1 * var(--gap) + 7px); width: 7px; height: 7px; box-sizing: border-box; border-top: var(--track) solid var(--ink); border-right: var(--track) solid var(--ink); transform: rotate(45deg); }
+  .state { font-size: 13px; font-weight: 500; color: var(--away); }
+  .track b { font-size: 1.05rem; font-weight: 600; line-height: 1.3; }
+  .body { font-size: 14px; line-height: 1.5; color: var(--ink-2); }
+  .systems { list-style: none; margin: 2px 0 0; padding: 0; display: grid; gap: 6px; }
+  .systems li { font-size: 14px; line-height: 1.35; padding: 7px 10px; border-radius: 4px; background: var(--paper); border: 1px solid var(--line-soft); }
+  /* return path: from under Shop back up into Gameplay */
+  .back { position: relative; height: 34px; margin: 14px 0 0; margin-left: calc((100% - 3 * var(--gap)) / 4 + var(--gap) + var(--node) / 2 - var(--track) / 2); margin-right: calc((100% - 3 * var(--gap)) / 4 - var(--node) / 2 - var(--track) / 2 + 0px); width: auto; }
+  .back::before { content: ''; position: absolute; inset: 0 0 auto; height: 18px; border: var(--track) solid var(--ink); border-top: 0; border-radius: 0 0 10px 10px; }
+  .back::after { content: ''; position: absolute; left: calc(var(--track) / 2 - 3.5px); top: 0; width: 7px; height: 7px; box-sizing: border-box; border-top: var(--track) solid var(--ink); border-left: var(--track) solid var(--ink); transform: rotate(45deg); }
+  .back span { position: absolute; left: 50%; top: 18px; transform: translate(-50%, -50%); display: inline-flex; align-items: center; gap: 6px; padding: 0 10px; background: var(--card); font-size: 13px; font-weight: 500; color: var(--ink); white-space: nowrap; }
+  .back svg { width: 12px; height: 12px; }
+  .ends { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px var(--gap); margin: 22px 0 0; padding-top: 18px; border-top: 1px solid var(--line); }
+  .ends dt { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+  .ends div:first-child dt { color: var(--stage-red, #b8231a); }
+  .ends dd { margin: 0; font-size: 14px; color: var(--ink-2); line-height: 1.5; }
+  @media (max-width: 900px) {
+    .track { grid-template-columns: 1fr; gap: 26px; padding-left: 30px; }
+    .node { position: absolute; left: -30px; top: 3px; margin: 0; }
+    .track > li:not(:last-child)::before { left: calc(-30px + var(--node) / 2 - var(--track) / 2); right: auto; top: calc(3px + var(--node) + 6px); bottom: -19px; width: var(--track); height: auto; }
+    .track > li:not(:last-child)::after { left: calc(-30px + var(--node) / 2 - 3.5px); right: auto; top: auto; bottom: -19px; transform: rotate(135deg); }
+    .back { margin: 14px 0 0 0; height: auto; }
+    .back::before, .back::after { display: none; }
+    .back span { position: static; transform: none; padding: 0; background: none; color: var(--away); }
+    .ends { grid-template-columns: 1fr; }
+  }
+</style>

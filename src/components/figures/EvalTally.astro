@@ -1,0 +1,91 @@
+---
+import type { Lang } from '../../i18n';
+
+interface Props { lang: Lang; compact?: boolean }
+const { lang, compact = false } = Astro.props;
+
+// Pairwise outcomes copied from docs/portfolio_case_study_25_cases.md (ai-evaluation-case-study).
+// "narrowly wins" is counted as a win, as in the report's 13 / 4 / 8 total.
+type O = 'gpt' | 'claude' | 'tie';
+const groups: { label: { en: string; zh: string }; cases: [string, O][] }[] = [
+  { label: { en: 'Instruction following', zh: '指令遵循' }, cases: [['IF-01', 'tie'], ['IF-02', 'gpt'], ['IF-03', 'tie'], ['IF-04', 'gpt'], ['IF-05', 'gpt'], ['IF-06', 'tie'], ['IF-07', 'claude'], ['IF-08', 'gpt']] },
+  { label: { en: 'Multilingual', zh: '多语言' }, cases: [['ML-01', 'gpt'], ['ML-02', 'claude'], ['ML-03', 'tie'], ['ML-04', 'tie'], ['ML-05', 'gpt']] },
+  { label: { en: 'Grounding', zh: '依据约束' }, cases: [['FG-01', 'claude'], ['FG-02', 'tie'], ['FG-03', 'gpt'], ['FG-04', 'gpt'], ['FG-05', 'gpt']] },
+  { label: { en: 'Context & ambiguity', zh: '上下文与歧义' }, cases: [['CTX-01', 'tie'], ['CTX-02', 'tie'], ['CTX-03', 'gpt'], ['CTX-04', 'gpt'], ['AMB-01', 'claude']] },
+  { label: { en: 'Safety', zh: '安全边界' }, cases: [['SAFE-01', 'gpt'], ['SAFE-02', 'gpt']] },
+];
+const all = groups.flatMap((g) => g.cases);
+const count = (o: O) => all.filter(([, x]) => x === o).length;
+const legend: [O, { en: string; zh: string }][] = [
+  ['gpt', { en: 'GPT wins', zh: 'GPT 胜' }],
+  ['claude', { en: 'Claude wins', zh: 'Claude 胜' }],
+  ['tie', { en: 'Tie', zh: '平局' }],
+];
+const outcomeLabel = (o: O) => legend.find(([k]) => k === o)![1][lang];
+---
+
+<figure class:list={['fig', 'tally', { compact }]}>
+  {!compact && (
+    <div class="fig-head mono">
+      <span>{lang === 'en' ? 'Pairwise outcome · every case' : '两两比较结果 · 每个案例'}</span>
+      <span>n = 25</span>
+    </div>
+  )}
+  <div class="rows">
+    {groups.map((g) => (
+      <div class="row">
+        <span class="row-label">{g.label[lang]}</span>
+        <ul class="cells" aria-label={g.label[lang]}>
+          {g.cases.map(([id, o]) => (
+            <li class={`cell ${o}`} title={`${id}: ${outcomeLabel(o)}`}>
+              <span class="id">{id}</span>
+              <span class="sr">{outcomeLabel(o)}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </div>
+  <div class="legend">
+    {legend.map(([o, l]) => (
+      <span><i class={`swatch ${o}`}></i>{l[lang]} <b>{count(o)}</b></span>
+    ))}
+  </div>
+  {!compact && (
+    <figcaption>
+      <span>{lang === 'en' ? 'Source: the published 25-case report. Narrow wins counted as wins.' : '来源：已公开的 25 案例报告。“略胜”计为胜。'}</span>
+    </figcaption>
+  )}
+</figure>
+
+<style>
+  .tally { display: flex; flex-direction: column; gap: 14px; }
+  .tally.compact { background: var(--paper-2); border: 0; border-radius: 0; justify-content: center; padding: 20px 22px; }
+  .rows { display: grid; gap: 8px; }
+  .row { display: grid; grid-template-columns: 150px 1fr; gap: 12px; align-items: center; }
+  .compact .row { grid-template-columns: 112px 1fr; gap: 8px; }
+  .compact .row-label { font-size: 11.5px; }
+  .compact .cells { gap: 4px; }
+  .row-label { font-size: 13.5px; color: var(--ink-2); }
+  .cells { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 5px; }
+  .cell { width: 62px; height: 30px; border-radius: 5px; display: grid; place-items: center; font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.02em; }
+  .compact .cell { width: 30px; height: 18px; font-size: 0; border-radius: 4px; }
+  .cell.gpt { background: var(--ink); color: var(--paper); }
+  .cell.claude { background: var(--cobalt); color: #fff; }
+  .cell.tie { background: var(--card); color: var(--muted); border: 1px solid var(--tie); }
+  .compact .cell.tie { background: transparent; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .legend { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 13.5px; color: var(--ink-2); }
+  .legend span { display: inline-flex; align-items: center; gap: 7px; }
+  .legend b { font-variant-numeric: tabular-nums; }
+  .swatch { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+  .swatch.gpt { background: var(--ink); }
+  .swatch.claude { background: var(--cobalt); }
+  .swatch.tie { border: 1px solid var(--tie); background: var(--card); }
+  @media (max-width: 560px) {
+    .row { grid-template-columns: 1fr; gap: 4px; }
+    .cell { width: 54px; }
+    .compact .row { grid-template-columns: 92px 1fr; }
+    .compact .cell { width: 24px; }
+  }
+</style>

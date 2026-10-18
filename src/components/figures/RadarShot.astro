@@ -1,0 +1,24 @@
+---
+import { Image } from 'astro:assets';
+import type { Lang } from '../../i18n';
+import en from '../../assets/news-radar/dashboard-en.png';
+import zh from '../../assets/news-radar/dashboard-zh.png';
+
+interface Props { lang: Lang; compact?: boolean }
+const { lang, compact = false } = Astro.props;
+const src = lang === 'en' ? en : zh;
+const alt = lang === 'en'
+  ? 'AI News Radar dashboard: a ranked list of evidence signals with source links, company matches and data gaps'
+  : 'AI News Radar 看板：按证据排序的信号列表，带来源链接、公司匹配和数据缺口';
+---
+
+{compact ? (
+  <Image src={src} alt={alt} widths={[480, 800]} sizes="(max-width: 760px) 92vw, 560px" />
+) : (
+  <figure class="fig fig-plain">
+    <Image class="shot" src={src} alt={alt} widths={[800, 1200, 1600]} sizes="(max-width: 1240px) 94vw, 1200px" loading="eager" />
+    <figcaption>
+      <span>{lang === 'en' ? 'Current interface. Public-source data can change or be delayed.' : '当前界面截图。公开数据可能变化或延迟。'}</span>
+    </figcaption>
+  </figure>
+)}

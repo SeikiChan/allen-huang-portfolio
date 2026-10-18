@@ -1,0 +1,28 @@
+---
+import type { Lang } from '../i18n';
+import type { FigureId } from '../data/projects';
+import EvalTally from './figures/EvalTally.astro';
+import EvalBox from './figures/EvalBox.astro';
+import EvalCase from './figures/EvalCase.astro';
+import ArenaFlow from './figures/ArenaFlow.astro';
+import AmFormation from './figures/AmFormation.astro';
+import GateLock from './figures/GateLock.astro';
+import RadarShot from './figures/RadarShot.astro';
+import RadarTiers from './figures/RadarTiers.astro';
+import Debt from './figures/Debt.astro';
+
+interface Props { id: FigureId; lang: Lang }
+const { id, lang } = Astro.props;
+---
+
+{id === 'eval-tally' && <EvalTally lang={lang} />}
+{id === 'eval-box' && <EvalBox lang={lang} />}
+{id === 'eval-case' && <EvalCase lang={lang} />}
+{id === 'arena-flow' && <ArenaFlow lang={lang} />}
+{id === 'am-formation' && <AmFormation lang={lang} />}
+{id === 'gate-lock' && <GateLock lang={lang} />}
+{id === 'radar-shot' && <RadarShot lang={lang} />}
+{id === 'radar-tiers' && <RadarTiers lang={lang} />}
+{id === 'debt-gallery' && <Debt lang={lang} view="gallery" />}
+{id === 'debt-loop' && <Debt lang={lang} view="loop" />}
+{id === 'debt-video' && <Debt lang={lang} view="video" />}
