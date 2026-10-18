@@ -87,7 +87,7 @@ const decisions = [
 ---
 
 <Base lang={lang} title={c.title} description={c.desc} path="">
-  <section class="hero" id="top" data-nav={lang === 'en' ? 'Intro' : '简介'}>
+  <section class="hero" id="top">
     <div class="wrap hero-copy">
       <span class="status-chip reveal"><i aria-hidden="true"></i>{c.chip}</span>
       <h1 class="reveal"><span class="grad">{c.h1[0]}</span><br /><span class="grad-accent">{c.h1[1]}</span></h1>
@@ -123,7 +123,7 @@ const decisions = [
     </div>
   </section>
 
-  <section class="section" id="work" style="padding-bottom: 0" data-nav={UI.navWork[lang]} data-sec="work">
+  <section class="section" id="work" style="padding-bottom: 0" data-sec="work">
     <div class="wrap">
       <div class="sec-head reveal">
         <span class="eyebrow">{c.workEyebrow}</span>
@@ -133,7 +133,7 @@ const decisions = [
     </div>
 
     {ai.map((m, i) => (
-      <article class:list={['chapter', { flip: i % 2 === 1 }]} id={`ch-${m.slug}`} data-chapter data-nav={m.title[lang]} data-sec="work">
+      <article class:list={['chapter', { flip: i % 2 === 1 }]} id={`ch-${m.slug}`} data-chapter data-sec="work">
         <div class="wrap chapter-grid">
           <div class="chapter-text reveal">
             <div class="ch-index"><span class="ch-num">0{i + 1}</span><span>{m.dates[lang]}</span>{m.status === 'live' && <span class="live">{m.statusLabel[lang]}</span>}</div>
@@ -171,7 +171,7 @@ const decisions = [
       </article>
     ))}
 
-    <article class="chapter game" id={`ch-${game.slug}`} data-chapter data-nav={game.title[lang]} data-sec="work">
+    <article class="chapter game" id={`ch-${game.slug}`} data-chapter data-sec="work">
       <div class="wrap game-grid">
         <div class="game-head">
           <div class="reveal">
@@ -199,7 +199,7 @@ const decisions = [
     {[...ai, game].map((m) => <a href={`#ch-${m.slug}`} data-target={`ch-${m.slug}`}><span>{m.title[lang]}</span><i></i></a>)}
   </nav>
 
-  <section class="section" id="about" data-nav={UI.navPlayer[lang]} data-sec="about">
+  <section class="section" id="about" data-sec="about">
     <div class="wrap about">
       <div class="reveal">
         <span class="eyebrow">{c.aboutEyebrow}</span>
@@ -210,7 +210,7 @@ const decisions = [
     </div>
   </section>
 
-  <section class="section contact" id="contact" data-nav={UI.navContact[lang]} data-sec="contact">
+  <section class="section contact" id="contact" data-sec="contact">
     <div class="wrap">
       <h2 class="grad reveal">{c.contactH[0]}<br />{c.contactH[1]}</h2>
       <p class="reveal">{c.contactP}</p>

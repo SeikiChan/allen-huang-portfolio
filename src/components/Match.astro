@@ -14,7 +14,7 @@ const onPaper = new Set<FigureId>(['eval-tally', 'eval-box', 'eval-case', 'arena
 ---
 
 <Base lang={lang} title={`${m.title[lang]} — Allen Huang`} description={m.line[lang]} path={`${m.slug}/`}>
-  <section class:list={['p-hero', { game: m.track === 'game' }]} data-nav={m.title[lang]} data-sec="work">
+  <section class:list={['p-hero', { game: m.track === 'game' }]} data-sec="work">
     <div class="wrap">
       <a class="p-back" href={`${href(lang)}#work`}>← {UI.back[lang]}</a>
       <div class="p-top">
@@ -45,7 +45,7 @@ const onPaper = new Set<FigureId>(['eval-tally', 'eval-box', 'eval-case', 'arena
   {m.blocks.map((b) => {
     const fig = b.kind === 'figure' ? b.figure : b.kind === 'text' ? b.figure : undefined;
     return (
-      <section class="block" data-nav={b.tag[lang]} data-sec="work">
+      <section class="block" data-sec="work">
         <div class="wrap">
           <div class="block-head reveal">
             <p class="tag">{b.tag[lang]}</p>
@@ -90,7 +90,7 @@ const onPaper = new Set<FigureId>(['eval-tally', 'eval-box', 'eval-case', 'arena
   })}
 
   <div class="wrap">
-    <a class="next" href={href(lang, `${next.slug}/`)} data-nav={UI.next[lang]} data-sec="work">
+    <a class="next" href={href(lang, `${next.slug}/`)} data-sec="work">
       <span><small>{UI.next[lang]}</small><strong>{next.title[lang]}</strong></span>
       <span class="arr" aria-hidden="true">→</span>
     </a>

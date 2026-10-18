@@ -75,33 +75,21 @@ function landAtTop() {
 // Motion Prompt #075 · MIT License (c) 2026 Shohei Ohtaki · https://showheyohtaki.github.io/motion-prompt/#075
 // Sticky header: once the page moves, a shadow under the header fades in over the next 24 px of scroll.
 // Motion Prompt #079 · MIT License (c) 2026 Shohei Ohtaki · https://showheyohtaki.github.io/motion-prompt/#079
-// Scroll progress bar: fill = scroll fraction of the page.
-function initCondense() {
+// Scroll progress bar: a thin line on the top edge, fill = scroll fraction of the page.
+// The nav itself follows the hide-on-scroll-down, show-on-scroll-up pattern of long-form reading sites.
+function initHeadroom() {
   const nav = document.getElementById('nav');
-  const btn = document.getElementById('nav-now');
-  const label = document.getElementById('nav-label');
-  const brand = nav?.querySelector<HTMLElement>('.brand');
-  const nowIn = btn?.querySelector<HTMLElement>('.now-in');
-  const inner = nav?.querySelector<HTMLElement>('.nav-inner');
-  if (!nav || !btn || !label || !brand || !nowIn || !inner) return;
-
-  const marks = [...document.querySelectorAll<HTMLElement>('[data-nav]')];
+  const bar = document.getElementById('progress');
+  if (!nav) return;
+  const marks = [...document.querySelectorAll<HTMLElement>('main [data-sec]')];
   const links = [...nav.querySelectorAll<HTMLAnchorElement>('a[data-sec]')];
-  const page = document.body.dataset.page ?? '';
-  const TOP = 140; // below this the nav always shows in full
-  let compact = false, lastY = scrollY, run = 0, need = 8, raf = 0, current = '';
+  const TOP = 140; // above this the nav always shows
+  let away = false, lastY = scrollY, run = 0, raf = 0;
 
-  const fit = () => {
-    const cs = getComputedStyle(inner);
-    const w = parseFloat(cs.paddingLeft) + brand.offsetWidth + nowIn.offsetWidth + parseFloat(cs.paddingRight) + 2;
-    nav.style.setProperty('--cw', `${Math.ceil(w)}px`);
-  };
-  const set = (on: boolean) => {
-    if (on === compact) return;
-    compact = on;
-    nav.classList.toggle('compact', on);
-    btn.setAttribute('aria-expanded', String(!on));
-    btn.tabIndex = on ? 0 : -1;
+  const set = (hide: boolean) => {
+    if (hide === away) return;
+    away = hide;
+    nav.classList.toggle('away', hide);
   };
 
   const update = () => {
@@ -113,45 +101,32 @@ function initCondense() {
     if ((dy > 0 && run < 0) || (dy < 0 && run > 0)) run = 0;
     run += dy;
     if (y < TOP) set(false);
-    else if (run > need) { set(true); need = 8; }
+    else if (run > 8 && !nav.contains(document.activeElement)) set(true);
     else if (run < -24) set(false);
 
     nav.style.setProperty('--sh', clamp(y / 24).toFixed(3));
     const max = document.documentElement.scrollHeight - innerHeight;
-    nav.style.setProperty('--p', max > 0 ? clamp(y / max).toFixed(4) : '0');
-
-    // Where the reader is: the last marked block whose top has passed 35% of the viewport.
-    const line = innerHeight * 0.35;
-    let mark = marks[0];
-    for (const m of marks) if (m.getBoundingClientRect().top <= line) mark = m;
-    const text = mark?.dataset.nav ?? '';
-    if (text !== current) {
-      current = text;
-      label.textContent = text;
-      label.classList.remove('swap');
-      void label.offsetWidth;
-      label.classList.add('swap');
-      fit();
+    if (bar) {
+      bar.style.setProperty('--p', max > 0 ? clamp(y / max).toFixed(4) : '0');
+      bar.classList.toggle('on', y >= TOP);
     }
-    const sec = mark?.dataset.sec ?? page;
+
+    // Mark the section the reader is in: the last marked block whose top has passed 35% of the viewport.
+    const line = innerHeight * 0.35;
+    let sec = '';
+    for (const m of marks) if (m.getBoundingClientRect().top <= line) sec = m.dataset.sec ?? '';
     links.forEach((a) => a.classList.toggle('on', a.dataset.sec === sec));
   };
   const queue = () => { if (!raf) raf = requestAnimationFrame(update); };
 
-  btn.addEventListener('click', () => {
-    set(false);
-    need = 48; // stay open until the reader clearly scrolls on
-    run = 0;
-    nav.querySelector<HTMLElement>('.nav-links a')?.focus({ preventScroll: true });
-  });
+  nav.addEventListener('focusin', () => set(false));
   addEventListener('scroll', queue, { passive: true });
-  addEventListener('resize', () => { fit(); queue(); }, { passive: true });
-  document.fonts?.ready.then(fit);
+  addEventListener('resize', queue, { passive: true });
   update();
 }
 
 export function initNav() {
   landAtTop();
   initGlide();
-  initCondense();
+  initHeadroom();
 }

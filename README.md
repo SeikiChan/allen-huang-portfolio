@@ -26,7 +26,7 @@ Every page exists in both languages; the Chinese version lives under `/zh/`.
 - **Images:** `src/assets/`. Astro resizes them and converts them to WebP at build time.
 - **Styles:** `src/styles/global.css`.
 - **Typesetting:** `src/integrations/no-orphans.mjs` runs after every build and joins the last four Chinese characters (word joiners) or the last two English words (no-break space) of each text block, so no line ends with a lone character or word.
-- **Nav and scrolling:** `src/scripts/nav.ts`. In-page links glide (cubic ease-in-out, up to 1.05 s); a new page always opens at its top; the nav condenses to a small pill while reading down and shows the current section from each block's `data-nav` attribute. Timings follow [Motion Prompt](https://github.com/showheyohtaki/motion-prompt) #093, #075 and #079 (MIT).
+- **Nav and scrolling:** `src/scripts/nav.ts`. In-page links glide (cubic ease-in-out, up to 1.05 s); a new page always opens at its top; the nav slides away while reading down and returns on any scroll up or keyboard focus, with a 2px progress line on the top edge. Timings follow [Motion Prompt](https://github.com/showheyohtaki/motion-prompt) #093, #075 and #079 (MIT).
 
 ### Media still to supply
 

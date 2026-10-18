@@ -76,34 +76,23 @@ code { font-family: var(--mono); font-size: 0.86em; background: rgba(125, 149, 2
 .js .reveal.in { opacity: 1; transform: none; }
 @media (prefers-reduced-motion: reduce) { .js .reveal { opacity: 1; transform: none; transition: none; } }
 
-/* Floating nav. Full pill at the top of the page; while reading down it condenses into a small pill on the
-   left edge of the content column (brand + where you are + reading progress). Scrolling up restores it. */
-.nav { --o: cubic-bezier(0.33, 1, 0.68, 1); --cw: 260px; --sh: 0; position: fixed; top: 14px; left: 50%; transform: translateX(-50%); z-index: 40; width: min(calc(100% - 24px), 980px); transition: left 0.55s var(--o), transform 0.55s var(--o), width 0.55s var(--o); view-transition-name: site-nav; }
-.nav.compact { left: max(12px, calc(max(0px, (100vw - var(--wrap) - 2 * var(--gutter)) / 2) + var(--gutter) - 19px)); transform: none; width: min(var(--cw), calc(100% - 24px)); }
-.nav-inner { position: relative; overflow: hidden; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 8px 8px 18px; border: 1px solid var(--line-2); border-radius: 999px; background: rgba(12, 18, 16, 0.72); backdrop-filter: blur(16px) saturate(140%); -webkit-backdrop-filter: blur(16px) saturate(140%); box-shadow: 0 12px 32px rgba(0, 0, 0, calc(0.45 * var(--sh))); }
-.brand { flex: none; text-decoration: none; font-weight: 600; letter-spacing: -0.02em; display: inline-flex; align-items: center; gap: 10px; white-space: nowrap; }
+/* Floating nav. Reading down hides it (it slides up out of the way); any scroll up or keyboard focus brings it
+   back. A 2px line on the top edge keeps the reading position without covering the text. */
+.nav { --o: cubic-bezier(0.33, 1, 0.68, 1); --sh: 0; position: fixed; top: 14px; left: 50%; z-index: 40; width: min(calc(100% - 24px), 980px); transform: translate(-50%, 0); transition: transform 0.45s var(--o), opacity 0.3s var(--o); view-transition-name: site-nav; }
+.nav.away { transform: translate(-50%, calc(-100% - 22px)); opacity: 0; transition: transform 0.4s var(--o), opacity 0.25s 0.1s; }
+.nav-inner { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 8px 8px 18px; border: 1px solid var(--line-2); border-radius: 999px; background: rgba(12, 18, 16, calc(0.72 + 0.24 * var(--sh))); backdrop-filter: blur(16px) saturate(140%); -webkit-backdrop-filter: blur(16px) saturate(140%); box-shadow: 0 12px 32px rgba(0, 0, 0, calc(0.45 * var(--sh))); }
+.brand { text-decoration: none; font-weight: 600; letter-spacing: -0.02em; display: inline-flex; align-items: center; gap: 10px; white-space: nowrap; }
 .brand i { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 4px rgba(143, 211, 178, 0.14); }
-.nav-now { flex: none; display: flex; align-items: center; max-width: 0; margin: 0 auto 0 -12px; padding: 0; overflow: hidden; border: 0; background: none; color: var(--text-2); font: inherit; font-size: 14px; cursor: pointer; opacity: 0; visibility: hidden; transition: max-width 0.55s var(--o), opacity 0.3s, visibility 0s 0.55s; }
-.now-in { display: inline-flex; align-items: center; gap: 10px; padding: 7px 12px 7px 14px; white-space: nowrap; }
-.now-in::before { content: ''; width: 1px; height: 14px; background: var(--line-2); margin-right: 4px; }
-.now-label { display: inline-block; max-width: calc(100vw - 210px); overflow: hidden; text-overflow: ellipsis; }
-.now-label.swap { animation: now-swap 0.4s var(--o); }
-@keyframes now-swap { from { opacity: 0; transform: translateY(45%); } }
-.now-in svg { width: 10px; height: 10px; color: var(--muted); transition: color 0.2s; }
-.nav-now:hover { color: var(--text); }
-.nav-now:hover svg { color: var(--text); }
-.nav-links { flex: none; display: flex; align-items: center; gap: 2px; font-size: 14px; transition: opacity 0.35s var(--o), visibility 0s; }
+.nav-links { display: flex; align-items: center; gap: 2px; font-size: 14px; }
 .nav-links a { text-decoration: none; color: var(--text-2); padding: 7px 12px; border-radius: 999px; transition: color 0.2s, background 0.2s; }
 .nav-links a:hover { color: var(--text); background: rgba(255, 255, 255, 0.06); }
 .nav-links a.on { color: var(--text); background: rgba(125, 149, 255, 0.16); }
 .nav-links .lang { color: var(--text); border: 1px solid var(--line-2); font-size: 13px; font-weight: 500; margin-left: 6px; }
-.nav-bar { position: absolute; left: 22px; right: 22px; bottom: 0; height: 2px; opacity: 0; transition: opacity 0.3s; }
-.nav-bar i { display: block; height: 100%; background: var(--accent); border-radius: 2px; transform-origin: left; transform: scaleX(var(--p, 0)); }
-.nav.compact .nav-now { max-width: 420px; opacity: 1; visibility: visible; transition: max-width 0.55s var(--o), opacity 0.35s 0.12s, visibility 0s; }
-.nav.compact .nav-links { opacity: 0; visibility: hidden; transition: opacity 0.2s, visibility 0s 0.2s; }
-.nav.compact .nav-bar { opacity: 1; }
+.progress { position: fixed; inset: 0 0 auto; height: 2px; z-index: 41; pointer-events: none; opacity: 0; transition: opacity 0.3s; }
+.progress.on { opacity: 1; }
+.progress i { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(var(--p, 0)); }
 @media (max-width: 600px) { .nav-links .opt { display: none; } .nav-inner { padding-left: 14px; } }
-@media (prefers-reduced-motion: reduce) { .nav, .nav-now, .nav-links { transition: none; } .now-label.swap { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .nav, .nav.away { transition: none; } }
 
 /* Anchor targets clear the floating nav; sections and chapters carry their own top padding. */
 [id] { scroll-margin-top: 84px; }
